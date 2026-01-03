@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anuncios de la Iglesia - Vista Pública</title>
+    <style>
+        /* Estilos generales */
+        :root {
+            --azul-principal: #1e3a8a;
+            --azul-secundario: #3b82f6;
+            --azul-claro: #dbeafe;
+            --blanco: #ffffff;
+            --gris-claro: #f3f4f6;
+            --gris: #9ca3af;
+            --gris-oscuro: #374151;
+            --sombra: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --verde: #10b981;
+            --rojo: #ef4444;
+            --naranja: #f59e0b;
+            --morado: #8b5cf6;
+            --amarillo: #fbbf24;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--gris-claro);
+            color: var(--gris-oscuro);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Encabezado */
+        .header {
+            background-color: var(--azul-principal);
+            color: var(--blanco);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--sombra);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .logo h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 0.2rem;
+        }
+        
+        /* Contenedor principal */
+        .container {
+            max-width: 1200px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+        
+        /* Instrucciones */
+        .instructions {
+            background-color: var(--blanco);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--sombra);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .instructions h2 {
+            color: var(--azul-principal);
+            margin-bottom: 0.8rem;
+            font-size: 1.5rem;
+        }
+        
+        .instructions p {
+            margin-bottom: 1rem;
+            color: var(--gris-oscuro);
+        }
+        
+        /* Filtros */
+        .filters {
+            background-color: var(--blanco);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--sombra);
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--azul-principal);
+        }
+        
+        .filter-group select {
+            padding: 0.6rem;
+            border: 1px solid var(--gris);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background-color: var(--blanco);
+        }
+        
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--azul-secundario);
+        }
+        
+        .reset-btn {
+            background-color: var(--gris);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+        }
+        
+        .reset-btn:hover {
+            background-color: #6b7280;
+        }
+        
+        /* Sección de anuncios */
+        .announcements-section {
+            background-color: var(--blanco);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--sombra);
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            color: var(--azul-principal);
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--azul-claro);
+            font-size: 1.3rem;
+            text-align: center;
+        }
+        
+        .announcements-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
+        }
+        
+        .announcement-card {
+            background-color: var(--azul-claro);
+            border-radius: 8px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--azul-principal);
+            position: relative;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .announcement-card h3 {
+            color: var(--azul-principal);
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+            padding-right: 0;
+        }
+        
+        .announcement-category {
+            background-color: var(--azul-secundario);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .announcement-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--gris-oscuro);
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 0.8rem;
+            border-radius: 4px;
+        }
+        
+        .announcement-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .announcement-meta strong {
+            color: var(--azul-principal);
+            min-width: 70px;
+        }
+        
+        .announcement-description {
+            margin-top: 1rem;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            padding: 1rem;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+            border-left: 3px solid var(--azul-secundario);
+        }
+        
+        .announcement-author {
+            font-size: 0.85rem;
+            color: var(--gris-oscuro);
+            margin-top: 1.2rem;
+            padding-top: 0.8rem;
+            border-top: 1px dashed var(--gris);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .announcement-author strong {
+            color: var(--azul-principal);
+        }
+        
+        .announcement-date {
+            font-size: 0.75rem;
+            color: #666;
+            font-style: italic;
+        }
+        
+        /* Mensaje de vacío */
+        .empty-message {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+            color: var(--gris);
+            font-size: 1rem;
+            background-color: var(--azul-claro);
+            border-radius: 8px;
+            border: 2px dashed var(--azul-secundario);
+        }
+        
+        /* Mensajes */
+        .message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1.2rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        
+        .message.info {
+            background-color: var(--azul-claro);
+            color: var(--azul-principal);
+            border: 1px solid var(--azul-secundario);
+        }
+        
+        .message.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        /* Estado de conexión */
+        .connection-status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            z-index: 1000;
+            background-color: white;
+            box-shadow: var(--sombra);
+        }
+        
+        .connection-status.online {
+            background-color: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+        
+        .connection-status.offline {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        /* Contador de anuncios */
+        .announcement-count {
+            background-color: var(--azul-claro);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--azul-principal);
+            border: 1px solid var(--azul-secundario);
+        }
+        
+        .announcement-count strong {
+            font-size: 1.1rem;
+        }
+        
+        /* Botón de actualizar */
+        .refresh-btn {
+            background-color: var(--verde);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .refresh-btn:hover {
+            background-color: #0da271;
+        }
+        
+        /* Filtro de fecha */
+        .date-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .date-filter label {
+            font-weight: 500;
+            color: var(--azul-principal);
+            font-size: 0.9rem;
+        }
+        
+        .date-filter input {
+            padding: 0.6rem;
+            border: 1px solid var(--gris);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1rem;
+            }
+            
+            .logo {
+                flex-direction: column;
+                gap: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .logo h1 {
+                font-size: 1.3rem;
+            }
+            
+            .subtitle {
+                font-size: 0.8rem;
+            }
+            
+            .container {
+                padding: 0 0.8rem;
+                margin: 1rem auto;
+            }
+            
+            .announcements-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .announcement-card {
+                padding: 1.2rem;
+            }
+            
+            .announcement-card h3 {
+                font-size: 1.1rem;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+            
+            .instructions {
+                padding: 1rem;
+            }
+            
+            .instructions h2 {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .announcement-card {
+                padding: 1rem;
+            }
+            
+            .announcement-card h3 {
+                font-size: 1rem;
+            }
+            
+            .announcement-description {
+                font-size: 0.9rem;
+                padding: 0.8rem;
+            }
+            
+            .announcement-author {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.3rem;
+            }
+            
+            .logo h1 {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+    
+    <!-- Firebase SDK version 12.7.0 - MISMA CONFIGURACIÓN -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+        
+        // MISMA configuración de Firebase que la app principal
+        const firebaseConfig = {
+            apiKey: "AIzaSyBLASmgZ4vwEyUEJ-A2xx3pihcgvipEaiE",
+            authDomain: "iglesia-anuncios.firebaseapp.com",
+            databaseURL: "https://iglesia-anuncios-default-rtdb.firebaseio.com",
+            projectId: "iglesia-anuncios",
+            storageBucket: "iglesia-anuncios.firebasestorage.app",
+            messagingSenderId: "6291270000",
+            appId: "1:6291270000:web:abb42fefab0c938a1ec7b5"
+        };
+        
+        // Inicializar Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        
+        // Hacer disponible en el scope global
+        window.firebaseDatabase = database;
+        window.firebaseRef = ref;
+        window.firebaseOnValue = onValue;
+        
+        console.log("Firebase inicializado correctamente para vista pública");
+    </script>
+</head>
+<body>
+    <!-- Encabezado -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">⛪</div>
+            <div>
+                <h1>Anuncios de la Iglesia</h1>
+                <div class="subtitle">Vista pública - Información actualizada en tiempo real</div>
+            </div>
+        </div>
+        <button id="refreshBtn" class="refresh-btn">
+            <span>🔄 Actualizar</span>
+        </button>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="container">
+        <!-- Instrucciones -->
+        <div class="instructions">
+            <h2>Anuncios Semanales de la Iglesia</h2>
+            <p>Esta página muestra todos los anuncios publicados por los diferentes departamentos de la iglesia.</p>
+            <p>Los anuncios se actualizan automáticamente en tiempo real cuando son publicados o modificados.</p>
+            <div id="syncStatus" class="message info" style="margin-top: 1rem; display: none;">
+                <span id="syncStatusText">Conectando con la base de datos...</span>
+            </div>
+        </div>
+
+        <!-- Contador de anuncios -->
+        <div id="announcementCount" class="announcement-count" style="display: none;">
+            Mostrando <strong id="countNumber">0</strong> anuncios de <strong id="totalNumber">0</strong> disponibles
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters">
+            <div class="filter-group">
+                <label for="departmentFilter">Filtrar por Departamento:</label>
+                <select id="departmentFilter">
+                    <option value="todos">Todos los departamentos</option>
+                    <option value="Ministerio Joven">Ministerio Joven</option>
+                    <option value="Ministerio Infantil">Ministerio Infantil</option>
+                    <option value="Escuela Sabática">Escuela Sabática</option>
+                    <option value="Ministerio Personal">Ministerio Personal</option>
+                    <option value="Ministerio de la Mujer">Ministerio de la Mujer</option>
+                    <option value="Ministerio de la Familia">Ministerio de la Familia</option>
+                    <option value="Mayordomía Cristiana">Mayordomía Cristiana</option>
+                    <option value="Ministerio de Salud">Ministerio de Salud</option>
+                    <option value="Comunicación">Comunicación</option>
+                    <option value="Director de Canto">Director de Canto</option>
+                    <option value="Director de Sonido">Director de Sonido</option>
+                    <option value="Dorcas">Dorcas</option>
+                    <option value="Libertad Religiosa">Libertad Religiosa</option>
+                    <option value="Diáconos y Diaconisas">Diáconos y Diaconisas</option>
+                    <option value="Ancianos de Iglesia">Ancianos de Iglesia</option>
+                    <option value="Secretaría de Iglesia">Secretaría de Iglesia</option>
+                    <option value="Tesoreria">Tesoreria</option>
+                    <option value="JA">JA (Jóvenes Adventistas)</option>
+                    <option value="Aventureros">Aventureros</option>
+                    <option value="Conquistadores">Conquistadores</option>
+                    <option value="Guías Mayores">Guías Mayores</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="sortFilter">Ordenar por:</label>
+                <select id="sortFilter">
+                    <option value="date_asc">Fecha (más cercana primero)</option>
+                    <option value="date_desc">Fecha (más lejana primero)</option>
+                    <option value="newest">Más recientes primero</option>
+                    <option value="department">Departamento (A-Z)</option>
+                </select>
+            </div>
+            
+            <div class="date-filter">
+                <div>
+                    <label for="dateFilter">Mostrar anuncios a partir de:</label>
+                    <input type="date" id="dateFilter">
+                </div>
+            </div>
+            
+            <button id="resetFiltersBtn" class="reset-btn">Limpiar Filtros</button>
+        </div>
+
+        <!-- Sección de anuncios -->
+        <section class="announcements-section">
+            <h2 class="section-title" id="currentFilterTitle">Todos los Anuncios</h2>
+            <div id="announcementsContainer" class="announcements-container">
+                <!-- Los anuncios se cargarán aquí dinámicamente -->
+                <div class="empty-message" id="emptyMessage">
+                    No hay anuncios para mostrar. Los anuncios aparecerán aquí cuando sean publicados.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Estado de conexión -->
+    <div id="connectionStatus" class="connection-status">
+        <span id="connectionStatusText">Conectando...</span>
+    </div>
+
+    <script>
+        // Estado de la aplicación
+        let announcements = [];
+        let filteredAnnouncements = [];
+        let currentFilters = {
+            department: 'todos',
+            sortBy: 'date_asc',
+            minDate: null
+        };
+
+        // Elementos del DOM
+        const departmentFilter = document.getElementById('departmentFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const announcementsContainer = document.getElementById('announcementsContainer');
+        const emptyMessage = document.getElementById('emptyMessage');
+        const currentFilterTitle = document.getElementById('currentFilterTitle');
+        const syncStatus = document.getElementById('syncStatus');
+        const syncStatusText = document.getElementById('syncStatusText');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const connectionStatusText = document.getElementById('connectionStatusText');
+        const announcementCount = document.getElementById('announcementCount');
+        const countNumber = document.getElementById('countNumber');
+        const totalNumber = document.getElementById('totalNumber');
+
+        // Establecer fecha mínima en el filtro de fecha (hoy)
+        const today = new Date().toISOString().split('T')[0];
+        dateFilter.min = today;
+
+        // Inicializar la aplicación
+        function initApp() {
+            // Mostrar estado de conexión
+            syncStatus.style.display = 'block';
+            syncStatusText.textContent = 'Conectando con la base de datos...';
+            
+            // Cargar anuncios desde Firebase
+            loadAnnouncementsFromFirebase();
+            
+            // Configurar event listeners
+            setupEventListeners();
+            
+            // Actualizar título según filtro actual
+            updateFilterTitle();
+        }
+
+        // Actualizar estado de conexión
+        function updateConnectionStatus(connected) {
+            if (connected) {
+                connectionStatus.className = 'connection-status online';
+                connectionStatusText.textContent = '✅ Conectado a la nube';
+            } else {
+                connectionStatus.className = 'connection-status offline';
+                connectionStatusText.textContent = '⚠️ Sin conexión a la nube';
+            }
+        }
+
+        // Cargar anuncios desde Firebase
+        function loadAnnouncementsFromFirebase() {
+            if (!window.firebaseDatabase) {
+                console.error("Firebase no está inicializado");
+                syncStatusText.textContent = 'Error: Firebase no inicializado';
+                syncStatus.className = 'message error';
+                return;
+            }
+            
+            try {
+                // Referencia a la MISMA base de datos que la app principal
+                const announcementsRef = window.firebaseRef(window.firebaseDatabase, 'announcements');
+                
+                // Escuchar cambios en tiempo real
+                window.firebaseOnValue(announcementsRef, (snapshot) => {
+                    const data = snapshot.val();
+                    
+                    if (data) {
+                        // Convertir objeto a array
+                        announcements = Object.values(data);
+                        
+                        console.log(`Cargados ${announcements.length} anuncios desde Firebase`);
+                        
+                        // Actualizar estado de sincronización
+                        syncStatusText.textContent = `✅ Sincronizado con la nube (${announcements.length} anuncios)`;
+                        syncStatus.className = 'message info';
+                        updateConnectionStatus(true);
+                        
+                        // Aplicar filtros y renderizar
+                        applyFilters();
+                        
+                    } else {
+                        announcements = [];
+                        syncStatusText.textContent = '✅ Base de datos vacía';
+                        syncStatus.className = 'message info';
+                        applyFilters();
+                    }
+                }, (error) => {
+                    console.error("Error cargando datos de Firebase:", error);
+                    syncStatusText.textContent = '⚠️ Error de conexión con la base de datos';
+                    syncStatus.className = 'message error';
+                    updateConnectionStatus(false);
+                });
+                
+            } catch (error) {
+                console.error("Error en loadAnnouncementsFromFirebase:", error);
+                syncStatusText.textContent = '⚠️ Error crítico de conexión';
+                syncStatus.className = 'message error';
+                updateConnectionStatus(false);
+            }
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Filtro de departamento
+            departmentFilter.addEventListener('change', (e) => {
+                currentFilters.department = e.target.value;
+                applyFilters();
+                updateFilterTitle();
+            });
+            
+            // Filtro de ordenamiento
+            sortFilter.addEventListener('change', (e) => {
+                currentFilters.sortBy = e.target.value;
+                applyFilters();
+            });
+            
+            // Filtro de fecha
+            dateFilter.addEventListener('change', (e) => {
+                currentFilters.minDate = e.target.value;
+                applyFilters();
+            });
+            
+            // Botón para resetear filtros
+            resetFiltersBtn.addEventListener('click', () => {
+                resetFilters();
+            });
+            
+            // Botón para refrescar
+            refreshBtn.addEventListener('click', () => {
+                syncStatusText.textContent = 'Actualizando datos...';
+                syncStatus.className = 'message info';
+                loadAnnouncementsFromFirebase();
+            });
+        }
+
+        // Resetear filtros
+        function resetFilters() {
+            departmentFilter.value = 'todos';
+            sortFilter.value = 'date_asc';
+            dateFilter.value = '';
+            
+            currentFilters = {
+                department: 'todos',
+                sortBy: 'date_asc',
+                minDate: null
+            };
+            
+            applyFilters();
+            updateFilterTitle();
+        }
+
+        // Aplicar filtros
+        function applyFilters() {
+            // Empezar con todos los anuncios
+            filteredAnnouncements = [...announcements];
+            
+            // Filtrar por departamento
+            if (currentFilters.department !== 'todos') {
+                filteredAnnouncements = filteredAnnouncements.filter(
+                    ann => ann.department === currentFilters.department
+                );
+            }
+            
+            // Filtrar por fecha mínima
+            if (currentFilters.minDate) {
+                filteredAnnouncements = filteredAnnouncements.filter(
+                    ann => ann.date >= currentFilters.minDate
+                );
+            }
+            
+            // Ordenar
+            filteredAnnouncements.sort((a, b) => {
+                switch(currentFilters.sortBy) {
+                    case 'date_asc':
+                        return new Date(a.date) - new Date(b.date);
+                    case 'date_desc':
+                        return new Date(b.date) - new Date(a.date);
+                    case 'newest':
+                        return b.id - a.id;
+                    case 'department':
+                        return a.department.localeCompare(b.department);
+                    default:
+                        return new Date(a.date) - new Date(b.date);
+                }
+            });
+            
+            // Actualizar contador
+            updateCounter();
+            
+            // Renderizar anuncios
+            renderAnnouncements();
+        }
+
+        // Actualizar contador
+        function updateCounter() {
+            if (announcements.length > 0) {
+                announcementCount.style.display = 'block';
+                countNumber.textContent = filteredAnnouncements.length;
+                totalNumber.textContent = announcements.length;
+            } else {
+                announcementCount.style.display = 'none';
+            }
+        }
+
+        // Actualizar título según filtro
+        function updateFilterTitle() {
+            let title = 'Todos los Anuncios';
+            
+            if (currentFilters.department !== 'todos') {
+                title = `Anuncios: ${currentFilters.department}`;
+            }
+            
+            if (currentFilters.minDate) {
+                const date = new Date(currentFilters.minDate);
+                const formattedDate = date.toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+                title += ` desde ${formattedDate}`;
+            }
+            
+            currentFilterTitle.textContent = title;
+        }
+
+        // Renderizar anuncios
+        function renderAnnouncements() {
+            // Mostrar mensaje si no hay anuncios
+            if (filteredAnnouncements.length === 0) {
+                let message = 'No hay anuncios para mostrar.';
+                
+                if (currentFilters.department !== 'todos') {
+                    message = `No hay anuncios para el departamento ${currentFilters.department}.`;
+                } else if (currentFilters.minDate) {
+                    message = `No hay anuncios a partir de la fecha seleccionada.`;
+                } else if (announcements.length === 0) {
+                    message = 'No hay anuncios para mostrar. Los anuncios aparecerán aquí cuando sean publicados.';
+                }
+                
+                emptyMessage.textContent = message;
+                emptyMessage.style.display = 'block';
+                announcementsContainer.innerHTML = '';
+                announcementsContainer.appendChild(emptyMessage);
+                return;
+            }
+            
+            // Ocultar mensaje de vacío
+            emptyMessage.style.display = 'none';
+            
+            // Generar HTML de los anuncios
+            let announcementsHTML = '';
+            
+            filteredAnnouncements.forEach(announcement => {
+                const createdDate = new Date(announcement.createdAt);
+                const formattedDate = createdDate.toLocaleDateString('es-ES', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                // Formatear fecha del evento
+                const eventDate = new Date(announcement.date);
+                const formattedEventDate = eventDate.toLocaleDateString('es-ES', {
+                    weekday: 'long',
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                
+                announcementsHTML += `
+                    <div class="announcement-card">
+                        <h3>${announcement.title}</h3>
+                        <div class="announcement-category">${announcement.department}</div>
+                        <div class="announcement-meta">
+                            <span>
+                                <strong>📅 Fecha:</strong> ${formattedEventDate}
+                            </span>
+                            <span>
+                                <strong>🕐 Hora:</strong> ${announcement.time}
+                            </span>
+                        </div>
+                        <div class="announcement-description">
+                            ${announcement.description}
+                        </div>
+                        <div class="announcement-author">
+                            <div>
+                                <strong>📝 Publicado por:</strong> ${announcement.author}
+                            </div>
+                            <div class="announcement-date">
+                                📌 Publicado el: ${formattedDate}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            announcementsContainer.innerHTML = announcementsHTML;
+        }
+
+        // Inicializar la aplicación cuando se carga la página
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

@@ -15,6 +15,9 @@
             --gris-oscuro: #374151;
             --sombra: 0 4px 6px rgba(0, 0, 0, 0.1);
             --verde: #10b981;
+            --morado: #8b5cf6;
+            --naranja: #f59e0b;
+            --rojo: #ef4444;
         }
         
         * {
@@ -203,6 +206,8 @@
             border-left: 4px solid var(--azul-principal);
             transition: transform 0.3s, box-shadow 0.3s;
             animation: fadeIn 0.5s ease;
+            cursor: pointer;
+            position: relative;
         }
         
         .announcement-card:hover {
@@ -227,10 +232,10 @@
             font-size: 1.2rem;
             font-weight: 600;
             margin-right: 1rem;
+            flex: 1;
         }
         
         .announcement-category {
-            background-color: var(--azul-secundario);
             color: white;
             padding: 0.3rem 0.8rem;
             border-radius: 20px;
@@ -269,6 +274,18 @@
             font-size: 0.95rem;
             line-height: 1.6;
             border-left: 3px solid var(--azul-secundario);
+            max-height: 150px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .announcement-description::after {
+            content: '...';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(to right, transparent, var(--azul-claro) 50%);
+            padding-left: 2rem;
         }
         
         .announcement-footer {
@@ -345,6 +362,253 @@
             text-align: center;
         }
         
+        /* Modal de detalles */
+        .details-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 1rem;
+        }
+        
+        .details-modal.active {
+            display: flex;
+        }
+        
+        .details-content {
+            background-color: var(--blanco);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: var(--sombra);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .details-header {
+            background-color: var(--azul-principal);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .details-header h3 {
+            font-size: 1.3rem;
+            margin: 0;
+        }
+        
+        .details-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .details-close:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .details-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .details-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .details-section h4 {
+            color: var(--azul-principal);
+            margin-bottom: 0.8rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--azul-claro);
+            font-size: 1.1rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            margin-bottom: 0.8rem;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            min-width: 120px;
+            color: var(--gris-oscuro);
+        }
+        
+        .detail-value {
+            flex: 1;
+            color: var(--gris-oscuro);
+            line-height: 1.5;
+        }
+        
+        .file-preview-container {
+            margin-top: 1.5rem;
+        }
+        
+        .file-preview {
+            border: 1px solid var(--gris-claro);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            background-color: var(--gris-claro);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            display: block;
+            margin: 0 auto;
+            border-radius: 4px;
+        }
+        
+        .video-preview {
+            width: 100%;
+            max-height: 300px;
+            border-radius: 4px;
+        }
+        
+        .pdf-preview {
+            width: 100%;
+            height: 400px;
+            border: none;
+            border-radius: 4px;
+        }
+        
+        .no-preview {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gris);
+            font-size: 0.9rem;
+        }
+        
+        .preview-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .preview-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .preview-download-btn {
+            background-color: var(--verde);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.3s;
+        }
+        
+        .preview-download-btn:hover {
+            background-color: #0da271;
+        }
+        
+        .view-more {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: var(--azul-secundario);
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .view-more:hover {
+            background-color: #2563eb;
+        }
+        
+        .files-count {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--morado);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        
+        /* Modal de carga */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            flex-direction: column;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .loading-overlay-content {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--blanco);
+            border-radius: 8px;
+            box-shadow: var(--sombra);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .loading-overlay-icon {
+            font-size: 3rem;
+            color: var(--azul-principal);
+            margin-bottom: 1rem;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 0 0.8rem;
@@ -386,6 +650,32 @@
                 padding: 0.6rem 1rem;
                 max-width: 250px;
             }
+            
+            .details-content {
+                width: 95%;
+                max-height: 85vh;
+            }
+            
+            .details-header {
+                padding: 1rem;
+            }
+            
+            .details-body {
+                padding: 1rem;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                gap: 0.3rem;
+            }
+            
+            .detail-label {
+                min-width: auto;
+            }
+            
+            .pdf-preview {
+                height: 300px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -412,6 +702,15 @@
             
             .announcement-card {
                 padding: 1.2rem;
+            }
+            
+            .announcement-title {
+                font-size: 1rem;
+            }
+            
+            .announcement-description {
+                font-size: 0.85rem;
+                padding: 0.8rem;
             }
         }
     </style>
@@ -441,6 +740,28 @@
     </script>
 </head>
 <body>
+    <!-- Modal de detalles -->
+    <div id="detailsModal" class="details-modal">
+        <div class="details-content">
+            <div class="details-header">
+                <h3>Detalles del Anuncio</h3>
+                <button id="closeDetailsBtn" class="details-close">×</button>
+            </div>
+            <div class="details-body" id="detailsBody">
+                <!-- Los detalles se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de carga -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-overlay-content">
+            <div class="loading-overlay-icon">⏳</div>
+            <h3 id="loadingTitle">Cargando...</h3>
+            <p id="loadingMessage">Por favor espera mientras se cargan los detalles.</p>
+        </div>
+    </div>
+
     <header class="header">
         <div class="logo">
             <div class="logo-icon">⛪</div>
@@ -542,9 +863,96 @@
         const syncStatusText = document.getElementById('syncStatusText');
         const announcementCounter = document.getElementById('announcementCounter');
         const counterText = document.getElementById('counterText');
+        const detailsModal = document.getElementById('detailsModal');
+        const closeDetailsBtn = document.getElementById('closeDetailsBtn');
+        const detailsBody = document.getElementById('detailsBody');
+        const loadingOverlay = document.getElementById('loadingOverlay');
 
         // Departamentos que pertenecen a Ministerio Joven
         const ministerioJovenDepartments = ['JA', 'Aventureros', 'Conquistadores', 'Guías Mayores', 'Ministerio Joven'];
+
+        // Función para convertir hora de 24h a 12h con AM/PM
+        function convertTo12Hour(time) {
+            if (!time) return 'No especificada';
+            
+            try {
+                const [hours, minutes] = time.split(':');
+                let hour = parseInt(hours);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                
+                hour = hour % 12;
+                hour = hour === 0 ? 12 : hour;
+                
+                return `${hour}:${minutes} ${ampm}`;
+            } catch (e) {
+                return time;
+            }
+        }
+
+        // Función para formatear tamaño de archivo
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Función para obtener icono según tipo de archivo
+        function getFileIcon(fileType) {
+            if (fileType.startsWith('image/')) return '🖼️';
+            if (fileType.startsWith('video/')) return '🎬';
+            if (fileType === 'application/pdf') return '📄';
+            if (fileType.includes('word') || fileType.includes('document')) return '📝';
+            if (fileType.includes('excel') || fileType.includes('spreadsheet')) return '📊';
+            if (fileType.includes('powerpoint') || fileType.includes('presentation')) return '📽️';
+            return '📎';
+        }
+
+        // Función para obtener nombre del tipo de archivo
+        function getFileTypeName(fileType) {
+            if (fileType.startsWith('image/')) return 'Imagen';
+            if (fileType.startsWith('video/')) return 'Video';
+            if (fileType === 'application/pdf') return 'Documento PDF';
+            if (fileType.includes('word') || fileType.includes('document')) return 'Documento Word';
+            if (fileType.includes('excel') || fileType.includes('spreadsheet')) return 'Hoja de cálculo Excel';
+            if (fileType.includes('powerpoint') || fileType.includes('presentation')) return 'Presentación PowerPoint';
+            return 'Archivo';
+        }
+
+        // Función para formatear fecha correctamente
+        function formatDate(dateString) {
+            try {
+                // Dividir la fecha en partes
+                const [year, month, day] = dateString.split('-');
+                
+                // Crear objeto Date con la fecha correcta
+                const date = new Date(year, month - 1, day);
+                
+                // Formatear en español
+                return date.toLocaleDateString('es-ES', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            } catch (error) {
+                console.error("Error al formatear fecha:", error);
+                return dateString;
+            }
+        }
+
+        // Función para mostrar overlay de carga
+        function showLoadingOverlay(title = 'Cargando...', message = 'Por favor espera.') {
+            document.getElementById('loadingTitle').textContent = title;
+            document.getElementById('loadingMessage').textContent = message;
+            loadingOverlay.classList.add('active');
+        }
+
+        // Función para ocultar overlay de carga
+        function hideLoadingOverlay() {
+            loadingOverlay.classList.remove('active');
+        }
 
         function initApp() {
             syncStatusText.textContent = 'Conectando con la base de datos...';
@@ -621,6 +1029,16 @@
             refreshBtn.addEventListener('click', () => {
                 syncStatusText.textContent = 'Actualizando...';
                 loadAnnouncementsFromFirebase();
+            });
+            
+            // Cerrar modal de detalles
+            closeDetailsBtn.addEventListener('click', closeDetailsModal);
+            
+            // Cerrar modal de detalles al hacer clic fuera
+            detailsModal.addEventListener('click', (e) => {
+                if (e.target === detailsModal) {
+                    closeDetailsModal();
+                }
             });
         }
 
@@ -709,13 +1127,8 @@
                     minute: '2-digit'
                 });
                 
-                const eventDate = new Date(announcement.date);
-                const formattedEventDate = eventDate.toLocaleDateString('es-ES', {
-                    weekday: 'long',
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric'
-                });
+                // Usar la función formatDate para mostrar la fecha correctamente
+                const formattedEventDate = formatDate(announcement.date);
                 
                 // Asignar colores diferentes por tipo de departamento
                 let categoryColor = 'var(--azul-secundario)';
@@ -729,10 +1142,20 @@
                     categoryColor = '#ef4444'; // Rojo para Guías Mayores
                 } else if (announcement.department === 'Ministerio Joven') {
                     categoryColor = '#3b82f6'; // Azul para Ministerio Joven general
+                } else if (announcement.department === 'Ministerio Infantil') {
+                    categoryColor = '#ec4899'; // Rosa para Infantil
+                } else if (announcement.department === 'Escuela Sabática') {
+                    categoryColor = '#0ea5e9'; // Azul claro para Escuela Sabática
                 }
                 
+                // Contar archivos adjuntos
+                const fileCount = announcement.files ? announcement.files.length : 0;
+                
+                // Convertir hora a formato 12h
+                const timeDisplay = announcement.time ? convertTo12Hour(announcement.time) : 'No especificada';
+                
                 announcementsHTML += `
-                    <div class="announcement-card">
+                    <div class="announcement-card" onclick="openAnnouncementDetails(${announcement.id})">
                         <div class="announcement-header">
                             <div class="announcement-title">${announcement.title}</div>
                             <div class="announcement-category" style="background-color: ${categoryColor}">
@@ -740,17 +1163,20 @@
                             </div>
                         </div>
                         
+                        ${fileCount > 0 ? `<div class="files-count">📎 ${fileCount}</div>` : ''}
+                        
                         <div class="announcement-details">
                             <div class="detail-item">
                                 <strong>📅 Fecha:</strong> ${formattedEventDate}
                             </div>
                             <div class="detail-item">
-                                <strong>🕐 Hora:</strong> ${announcement.time}
+                                <strong>🕐 Hora:</strong> ${timeDisplay}
                             </div>
                         </div>
                         
                         <div class="announcement-description">
                             ${announcement.description}
+                            <button class="view-more">Ver más ⤴</button>
                         </div>
                         
                         <div class="announcement-footer">
@@ -768,7 +1194,181 @@
             announcementsContainer.innerHTML = announcementsHTML;
         }
 
+        // Abrir detalles del anuncio
+        function openAnnouncementDetails(id) {
+            showLoadingOverlay('Cargando detalles...', 'Obteniendo información del anuncio...');
+            
+            // Buscar el anuncio
+            const announcement = announcements.find(ann => ann.id === id);
+            
+            if (announcement) {
+                hideLoadingOverlay();
+                
+                // Convertir horas a formato 12h
+                const startTime = announcement.time ? convertTo12Hour(announcement.time) : 'No especificada';
+                const endTime = announcement.endTime ? convertTo12Hour(announcement.endTime) : null;
+                
+                // Usar la función formatDate para mostrar la fecha correctamente
+                const eventDate = formatDate(announcement.date);
+                const endDateDisplay = announcement.endDate ? formatDate(announcement.endDate) : null;
+                
+                // Generar contenido para archivos
+                let filesContent = '';
+                if (announcement.files && announcement.files.length > 0) {
+                    filesContent = `
+                        <div class="details-section">
+                            <h4>Archivos Adjuntos (${announcement.files.length})</h4>
+                            ${announcement.files.map((file, index) => `
+                                <div class="file-preview-container">
+                                    <div class="detail-row">
+                                        <div class="detail-label">Archivo ${index + 1}:</div>
+                                        <div class="detail-value">
+                                            ${getFileIcon(file.type)} ${file.name}
+                                            <span style="color: var(--gris); font-size: 0.9rem;">
+                                                (${getFileTypeName(file.type)} • ${formatFileSize(file.size)})
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="file-preview">
+                                        ${generateFilePreview(file, announcement.id, index)}
+                                    </div>
+                                    <div class="preview-actions">
+                                        <button class="preview-download-btn" onclick="downloadFile(${announcement.id}, ${index})">
+                                            ⬇️ Descargar Archivo
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                // Construir contenido del modal
+                const detailsContent = `
+                    <div class="details-section">
+                        <h4>Información del Anuncio</h4>
+                        <div class="detail-row">
+                            <div class="detail-label">Título:</div>
+                            <div class="detail-value">${announcement.title}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Departamento:</div>
+                            <div class="detail-value">${announcement.department}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Autor:</div>
+                            <div class="detail-value">${announcement.author}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="details-section">
+                        <h4>Fecha y Hora</h4>
+                        <div class="detail-row">
+                            <div class="detail-label">Fecha de inicio:</div>
+                            <div class="detail-value">${eventDate}</div>
+                        </div>
+                        <div class="detail-row">
+                            <div class="detail-label">Hora de inicio:</div>
+                            <div class="detail-value">${startTime}</div>
+                        </div>
+                        ${endDateDisplay ? `
+                        <div class="detail-row">
+                            <div class="detail-label">Fecha de fin:</div>
+                            <div class="detail-value">${endDateDisplay}</div>
+                        </div>
+                        ` : ''}
+                        ${endTime ? `
+                        <div class="detail-row">
+                            <div class="detail-label">Hora de fin:</div>
+                            <div class="detail-value">${endTime}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="details-section">
+                        <h4>Descripción Completa</h4>
+                        <div class="detail-value" style="background-color: var(--azul-claro); padding: 1rem; border-radius: 8px; line-height: 1.6;">
+                            ${announcement.description.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                    
+                    ${filesContent}
+                `;
+                
+                detailsBody.innerHTML = detailsContent;
+                detailsModal.classList.add('active');
+            } else {
+                hideLoadingOverlay();
+                alert('No se pudo cargar la información del anuncio.');
+            }
+        }
+
+        // Generar vista previa de archivo
+        function generateFilePreview(file, announcementId, fileIndex) {
+            if (file.type.startsWith('image/')) {
+                const base64Data = `data:${file.type};base64,${file.data}`;
+                return `<img src="${base64Data}" class="image-preview" alt="${file.name}">`;
+            } else if (file.type.startsWith('video/')) {
+                const base64Data = `data:${file.type};base64,${file.data}`;
+                return `<video controls class="video-preview">
+                    <source src="${base64Data}" type="${file.type}">
+                    Tu navegador no soporta la reproducción de video.
+                </video>`;
+            } else if (file.type === 'application/pdf') {
+                const base64Data = `data:${file.type};base64,${file.data}`;
+                return `<iframe src="${base64Data}" class="pdf-preview" title="${file.name}"></iframe>`;
+            } else {
+                return `
+                    <div class="no-preview">
+                        <div class="preview-icon">${getFileIcon(file.type)}</div>
+                        <p>Vista previa no disponible para este tipo de archivo</p>
+                        <p style="font-size: 0.8rem; color: var(--gris); margin-top: 0.5rem;">
+                            ${getFileTypeName(file.type)} • ${formatFileSize(file.size)}
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        // Descargar archivo
+        function downloadFile(announcementId, fileIndex) {
+            const announcement = announcements.find(ann => ann.id === announcementId);
+            if (announcement && announcement.files && announcement.files[fileIndex]) {
+                const file = announcement.files[fileIndex];
+                try {
+                    const byteCharacters = atob(file.data);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: file.type });
+                    
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = file.name;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                } catch (error) {
+                    console.error("Error al descargar archivo:", error);
+                    alert('Error al descargar el archivo. Intenta nuevamente.');
+                }
+            }
+        }
+
+        // Cerrar modal de detalles
+        function closeDetailsModal() {
+            detailsModal.classList.remove('active');
+        }
+
         document.addEventListener('DOMContentLoaded', initApp);
+        
+        // Hacer funciones disponibles globalmente
+        window.openAnnouncementDetails = openAnnouncementDetails;
+        window.downloadFile = downloadFile;
     </script>
 </body>
 </html>

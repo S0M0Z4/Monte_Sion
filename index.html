@@ -2,8 +2,21 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anuncios - Iglesia Monte Sion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="description" content="Anuncios públicos y actividades de la Iglesia Monte Sion, actualizados en tiempo real.">
+    <meta name="application-name" content="Anuncios Públicos - Iglesia Monte Sion">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Anuncios Iglesia">
+    <title>Anuncios Públicos - Iglesia Monte Sion</title>
+
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./icon/icon-512.png">
+    <link rel="apple-touch-icon" href="./icon/apple-touch-icon.png">
+    <link rel="stylesheet" href="./assets/bootstrap-icons.min.css">
+
     <style>
         :root {
             --azul-principal: #1e3a8a;
@@ -18,709 +31,405 @@
             --morado: #8b5cf6;
             --naranja: #f59e0b;
             --rojo: #ef4444;
+            --azul-noche: #0f2f76;
+            --azul-brillante: #0d6efd;
+            --fondo: #f4f7fc;
+            --borde: #e5eaf2;
+            --texto-suave: #64748b;
+            --radio: 18px;
+            --sombra-suave: 0 12px 35px rgba(30, 58, 138, 0.09);
+            --sidebar-width: 245px;
+            --header-height: 76px;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
         body {
-            background-color: var(--gris-claro);
-            color: var(--gris-oscuro);
-            line-height: 1.6;
             min-height: 100vh;
+            background: var(--fondo);
+            color: var(--gris-oscuro);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.55;
+            overflow-x: hidden;
         }
-        
-        .header {
-            background-color: var(--azul-principal);
+        body.modal-open { overflow: hidden; }
+        button, input, select { font: inherit; }
+        button { border: 0; }
+        button:focus-visible, input:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+            outline: 3px solid rgba(59, 130, 246, 0.35);
+            outline-offset: 2px;
+        }
+        img, video, iframe { max-width: 100%; }
+        [hidden] { display: none !important; }
+
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            min-height: var(--header-height);
             color: var(--blanco);
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: var(--sombra);
+            background: linear-gradient(100deg, var(--azul-principal), #075fea 76%, #0877ff);
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.2);
         }
-        
-        .logo {
+        .header-inner {
+            width: min(1500px, 100%);
+            min-height: var(--header-height);
+            margin: 0 auto;
+            padding: 10px 22px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 0.5rem;
+            justify-content: space-between;
+            gap: 18px;
         }
-        
-        .logo-icon {
-            font-size: 2.5rem;
+        .brand { display: inline-flex; align-items: center; gap: 11px; color: inherit; text-decoration: none; min-width: 0; }
+        .brand-logo {
+            width: 50px; height: 50px; border-radius: 14px; object-fit: cover; background: var(--blanco);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
         }
-        
-        .logo h1 {
-            font-size: 1.8rem;
-            font-weight: 600;
+        .brand-copy { min-width: 0; display: grid; line-height: 1.13; }
+        .brand-copy strong { font-size: 1.05rem; white-space: nowrap; }
+        .brand-copy small { font-size: 0.78rem; opacity: 0.85; }
+        .header-actions { display: flex; align-items: center; gap: 9px; }
+        .header-button, .install-btn {
+            min-height: 42px; border-radius: 12px; padding: 0 15px; display: inline-flex; align-items: center;
+            justify-content: center; gap: 8px; color: var(--blanco); background: rgba(255,255,255,.14);
+            border: 1px solid rgba(255,255,255,.22); cursor: pointer; font-weight: 700; font-size: .88rem;
+            transition: transform .2s, background .2s, box-shadow .2s;
         }
-        
-        .subtitle {
-            font-size: 1rem;
-            opacity: 0.9;
-            margin-top: 0.5rem;
+        .header-button:hover, .install-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,.24); box-shadow: 0 8px 18px rgba(0,0,0,.1); }
+        .install-btn { background: var(--blanco); color: var(--azul-principal); border-color: var(--blanco); }
+        .notification-button { position: relative; width: 44px; padding: 0; }
+        .notification-badge {
+            position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px;
+            display: none; place-items: center; border-radius: 999px; background: var(--rojo); color: white;
+            border: 2px solid #075fea; font-size: .68rem; font-weight: 800;
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        
-        .info-box {
-            background-color: var(--blanco);
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: var(--sombra);
-            margin-bottom: 2rem;
-            text-align: center;
-            border-left: 5px solid var(--azul-principal);
-        }
-        
-        .info-box h2 {
-            color: var(--azul-principal);
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-        
-        .info-box p {
-            margin-bottom: 1rem;
-            color: var(--gris-oscuro);
-        }
-        
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            margin-top: 1rem;
-        }
-        
-        .status-indicator.online {
-            background-color: #dcfce7;
-            color: #166534;
-            border: 1px solid #bbf7d0;
-        }
-        
-        .status-indicator.offline {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-        
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-        
-        .status-dot.online {
-            background-color: #16a34a;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        
-        .filters {
-            background-color: var(--blanco);
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: var(--sombra);
-            margin-bottom: 1.5rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            min-width: 250px;
-        }
-        
-        .filter-group label {
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--azul-principal);
-            font-size: 0.9rem;
-        }
-        
-        .filter-group select {
-            padding: 0.7rem;
-            border: 1px solid var(--gris);
-            border-radius: 5px;
-            font-size: 1rem;
-            background-color: var(--blanco);
-        }
-        
-        .filter-group select:focus {
-            outline: none;
-            border-color: var(--azul-secundario);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        
-        .counter {
-            background-color: var(--blanco);
-            border-radius: 8px;
-            padding: 0.8rem 1.2rem;
-            box-shadow: var(--sombra);
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-size: 0.85rem;
-            color: var(--gris-oscuro);
-            border: 1px solid var(--gris-claro);
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .counter strong {
-            color: var(--azul-principal);
-            font-weight: 600;
-        }
-        
-        .announcements-container {
+        .notification-badge.active { display: grid; }
+
+        .app-shell {
+            width: min(1600px, 100%);
+            min-height: calc(100vh - var(--header-height));
+            margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: var(--sidebar-width) minmax(0,1fr);
         }
-        
+        .sidebar {
+            position: sticky; top: var(--header-height); align-self: start; height: calc(100vh - var(--header-height));
+            padding: 26px 17px; background: var(--blanco); border-right: 1px solid var(--borde); overflow-y: auto;
+        }
+        .sidebar-label { padding: 0 13px; margin-bottom: 8px; color: #94a3b8; font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+        .sidebar-nav { display: grid; gap: 6px; }
+        .sidebar-link {
+            width: 100%; min-height: 46px; padding: 0 13px; border-radius: 12px; display: flex; align-items: center; gap: 12px;
+            color: var(--texto-suave); background: transparent; cursor: pointer; text-align: left; font-weight: 650; transition: .2s;
+        }
+        .sidebar-link i { width: 24px; font-size: 1.08rem; color: var(--azul-secundario); }
+        .sidebar-link:hover, .sidebar-link.active { color: var(--azul-principal); background: #eaf2ff; }
+        .sidebar-divider { height: 1px; margin: 20px 10px; background: var(--borde); }
+        .sidebar-info {
+            margin-top: 22px; padding: 16px; border-radius: 16px; color: var(--azul-principal);
+            background: linear-gradient(145deg, #edf5ff, #dbeafe); border: 1px solid #c9ddfb;
+        }
+        .sidebar-info i { font-size: 1.3rem; }
+        .sidebar-info strong { display: block; margin: 8px 0 4px; }
+        .sidebar-info p { color: #496184; font-size: .78rem; line-height: 1.45; }
+
+        .workspace { min-width: 0; }
+        .container { width: min(1240px, calc(100% - 42px)); margin: 0 auto; padding: 28px 0 110px; }
+        .app-view { display: none; animation: viewIn .28s ease; }
+        .app-view.active { display: block; }
+        @keyframes viewIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+        .dashboard-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+        .dashboard-heading h1 { color: #102a5e; font-size: clamp(1.55rem, 3vw, 2rem); }
+        .dashboard-heading p { color: var(--texto-suave); margin-top: 3px; }
+        .live-chip {
+            display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px;
+            color: #166534; background: #dcfce7; border: 1px solid #bbf7d0; font-size: .78rem; font-weight: 750;
+        }
+        .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulseDot 1.7s infinite; }
+        @keyframes pulseDot { 50% { opacity: .35; transform: scale(.8); } }
+
+        .dashboard-hero {
+            position: relative; min-height: 245px; padding: clamp(25px, 4vw, 42px); display: grid;
+            grid-template-columns: minmax(0,1fr) 205px; align-items: center; gap: 28px; overflow: hidden;
+            border-radius: 26px; color: white; background: linear-gradient(120deg, #10398e, #075fea 68%, #0c84ff);
+            box-shadow: 0 18px 42px rgba(30,58,138,.2);
+        }
+        .dashboard-hero::before, .dashboard-hero::after { content: ""; position: absolute; border-radius: 50%; background: rgba(255,255,255,.08); }
+        .dashboard-hero::before { width: 280px; height: 280px; right: -80px; top: -150px; }
+        .dashboard-hero::after { width: 190px; height: 190px; left: 38%; bottom: -145px; }
+        .hero-copy, .hero-mark { position: relative; z-index: 1; }
+        .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: .82rem; font-weight: 750; opacity: .92; }
+        .hero-copy blockquote { max-width: 680px; margin: 18px 0 8px; font-size: clamp(1.25rem, 2.9vw, 2rem); font-weight: 800; line-height: 1.25; }
+        .hero-copy cite { font-size: .84rem; opacity: .84; font-style: normal; }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+        .hero-button {
+            min-height: 43px; padding: 0 16px; border-radius: 12px; display: inline-flex; align-items: center; gap: 8px;
+            cursor: pointer; font-weight: 750; transition: .2s;
+        }
+        .hero-button:hover { transform: translateY(-2px); }
+        .hero-button.primary { background: white; color: var(--azul-principal); }
+        .hero-button.secondary { color: white; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); }
+        .hero-mark { display: grid; place-items: center; }
+        .hero-mark img { width: min(190px, 100%); aspect-ratio: 1; border-radius: 34px; box-shadow: 0 18px 34px rgba(4,20,68,.28); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; margin: 18px 0; }
+        .stat-card {
+            min-height: 105px; padding: 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+            background: white; border: 1px solid var(--borde); border-radius: 17px; box-shadow: var(--sombra-suave);
+        }
+        .stat-card small { display: block; color: var(--texto-suave); font-size: .78rem; }
+        .stat-card strong { display: block; margin-top: 4px; color: #102a5e; font-size: 1.72rem; }
+        .stat-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; color: var(--azul-brillante); background: #eaf2ff; font-size: 1.25rem; }
+
+        .dashboard-panels { display: grid; grid-template-columns: 1.35fr 1fr; gap: 18px; }
+        .panel, .filter-panel, .section-card {
+            background: white; border: 1px solid var(--borde); border-radius: var(--radio); box-shadow: var(--sombra-suave);
+        }
+        .panel-header, .section-header {
+            min-height: 62px; padding: 15px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            border-bottom: 1px solid var(--borde);
+        }
+        .panel-header h2, .section-header h2 { display: flex; align-items: center; gap: 9px; color: #102a5e; font-size: 1rem; }
+        .link-button { color: var(--azul-secundario); background: none; cursor: pointer; font-size: .8rem; font-weight: 750; }
+        .mini-list { padding: 8px 18px 15px; }
+        .mini-item {
+            display: grid; grid-template-columns: 42px minmax(0,1fr) auto; align-items: center; gap: 12px;
+            min-height: 66px; padding: 9px 0; border-bottom: 1px solid #edf1f7;
+        }
+        .mini-item:last-child { border-bottom: 0; }
+        .mini-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; color: var(--azul-secundario); background: #eaf2ff; }
+        .mini-copy { min-width: 0; }
+        .mini-copy strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #1f365e; font-size: .87rem; }
+        .mini-copy small { display: block; margin-top: 3px; color: var(--texto-suave); font-size: .72rem; }
+        .mini-badge { padding: 5px 8px; border-radius: 999px; background: #dcfce7; color: #166534; font-size: .66rem; font-weight: 800; }
+        .empty-mini { padding: 26px 10px; text-align: center; color: var(--texto-suave); font-size: .84rem; }
+
+        .section-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 17px; }
+        .section-title-row h1 { color: #102a5e; font-size: clamp(1.45rem, 3vw, 1.9rem); }
+        .section-title-row p { color: var(--texto-suave); margin-top: 4px; }
+        .primary-action {
+            min-height: 43px; padding: 0 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            border-radius: 12px; color: white; background: var(--azul-secundario); cursor: pointer; font-weight: 750;
+        }
+
+        .filter-panel { padding: 16px; margin-bottom: 17px; }
+        .filters-grid { display: grid; grid-template-columns: minmax(180px,1.3fr) repeat(2,minmax(165px,.75fr)) auto; gap: 12px; align-items: end; }
+        .filter-group { min-width: 0; }
+        .filter-group label { display: block; margin-bottom: 6px; color: #1d3c72; font-size: .74rem; font-weight: 750; }
+        .input-shell { position: relative; }
+        .input-shell > i { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #7c91b5; pointer-events: none; }
+        .filter-group input, .filter-group select {
+            width: 100%; min-height: 44px; padding: 0 13px; border: 1px solid #d6deeb; border-radius: 11px;
+            background: white; color: var(--gris-oscuro);
+        }
+        .input-shell input { padding-left: 39px; }
+        .filter-group input:focus, .filter-group select:focus { border-color: var(--azul-secundario); box-shadow: 0 0 0 3px rgba(59,130,246,.12); outline: none; }
+        .counter-line { margin: 2px 2px 14px; color: var(--texto-suave); font-size: .82rem; }
+        .counter-line strong { color: var(--azul-principal); }
+
+        .announcements-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
         .announcement-card {
-            background-color: var(--blanco);
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: var(--sombra);
-            border-left: 4px solid var(--azul-principal);
-            transition: transform 0.3s, box-shadow 0.3s;
-            animation: fadeIn 0.5s ease;
-            cursor: pointer;
-            position: relative;
+            position: relative; min-width: 0; overflow: hidden; background: white; border: 1px solid var(--borde); border-radius: 18px;
+            box-shadow: var(--sombra-suave); transition: transform .2s, box-shadow .2s; cursor: pointer;
         }
-        
-        .announcement-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        .announcement-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(30,58,138,.15); }
+        .card-cover {
+            position: relative; min-height: 118px; padding: 18px; display: flex; align-items: flex-end; overflow: hidden;
+            color: white; background: linear-gradient(135deg, var(--azul-principal), #0672f8);
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .card-cover::after { content: ""; position: absolute; width: 140px; height: 140px; right: -45px; top: -70px; border-radius: 50%; background: rgba(255,255,255,.11); }
+        .card-cover > i { position: absolute; right: 18px; bottom: 13px; font-size: 3.3rem; opacity: .16; }
+        .category-pill { position: relative; z-index: 1; max-width: calc(100% - 45px); padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.26); font-size: .7rem; font-weight: 800; }
+        .attachment-pill { position: absolute; z-index: 2; top: 12px; right: 12px; padding: 5px 8px; border-radius: 999px; background: rgba(15,47,118,.72); color: white; font-size: .68rem; font-weight: 800; }
+        .card-body { padding: 17px; }
+        .announcement-title { color: #17345f; font-size: 1.02rem; line-height: 1.32; }
+        .announcement-description { margin: 9px 0 14px; color: var(--texto-suave); font-size: .82rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .event-meta { display: grid; gap: 7px; padding: 12px; border-radius: 12px; background: #f5f8fc; }
+        .meta-row { display: flex; align-items: center; gap: 8px; color: #506785; font-size: .76rem; }
+        .meta-row i { color: var(--azul-secundario); }
+        .card-footer { padding: 13px 17px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-top: 1px solid #edf1f7; }
+        .author { min-width: 0; display: flex; align-items: center; gap: 8px; color: #3c567b; font-size: .73rem; }
+        .author span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .view-button { display: inline-flex; align-items: center; gap: 5px; color: var(--azul-secundario); background: transparent; font-size: .72rem; font-weight: 800; cursor: pointer; }
+
+        .departments-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 15px; }
+        .department-card {
+            min-height: 145px; padding: 19px; display: grid; align-content: center; justify-items: center; text-align: center; gap: 7px;
+            background: white; border: 1px solid var(--borde); border-radius: 17px; box-shadow: var(--sombra-suave); cursor: pointer; transition: .2s;
         }
-        
-        .announcement-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-        
-        .announcement-title {
-            color: var(--azul-principal);
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-right: 1rem;
-            flex: 1;
-        }
-        
-        .announcement-category {
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-        
-        .announcement-details {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.8rem;
-            margin-bottom: 1.2rem;
-            background-color: var(--gris-claro);
-            padding: 1rem;
-            border-radius: 8px;
-        }
-        
-        .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .detail-item strong {
-            color: var(--azul-principal);
-            min-width: 60px;
-        }
-        
-        .announcement-description {
-            background-color: var(--azul-claro);
-            padding: 1.2rem;
-            border-radius: 8px;
-            margin-bottom: 1.2rem;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            border-left: 3px solid var(--azul-secundario);
-            max-height: 150px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .announcement-description::after {
-            content: '...';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            background: linear-gradient(to right, transparent, var(--azul-claro) 50%);
-            padding-left: 2rem;
-        }
-        
-        .announcement-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1rem;
-            border-top: 1px dashed var(--gris);
-            font-size: 0.85rem;
-            color: var(--gris);
-        }
-        
-        .announcement-author {
-            color: var(--azul-principal);
-            font-weight: 500;
-        }
-        
-        .announcement-date {
-            font-style: italic;
-        }
-        
+        .department-card:hover { transform: translateY(-3px); border-color: #b9d3fa; }
+        .department-icon { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 15px; color: var(--azul-secundario); background: #eaf2ff; font-size: 1.35rem; }
+        .department-card h3 { color: #17345f; font-size: .88rem; }
+        .department-card p { color: var(--texto-suave); font-size: .72rem; }
+        .department-card strong { color: var(--azul-principal); font-size: 1.18rem; }
+
         .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 3rem;
-            background-color: var(--blanco);
-            border-radius: 10px;
-            box-shadow: var(--sombra);
+            grid-column: 1/-1; min-height: 270px; padding: 34px; display: grid; place-items: center; text-align: center;
+            background: white; border: 1px solid var(--borde); border-radius: 18px; box-shadow: var(--sombra-suave);
         }
-        
-        .empty-state-icon {
-            font-size: 3rem;
-            color: var(--gris);
-            margin-bottom: 1rem;
+        .empty-state-icon { width: 70px; height: 70px; display: grid; place-items: center; margin: 0 auto 13px; border-radius: 20px; color: var(--azul-secundario); background: #eaf2ff; font-size: 1.8rem; }
+        .empty-state h3 { color: #17345f; }
+        .empty-state p { max-width: 480px; margin-top: 6px; color: var(--texto-suave); font-size: .84rem; }
+
+        .modal {
+            position: fixed; inset: 0; z-index: 3000; padding: 18px; display: none; align-items: center; justify-content: center;
+            background: rgba(8,25,58,.66); backdrop-filter: blur(5px);
         }
-        
-        .empty-state h3 {
-            color: var(--azul-principal);
-            margin-bottom: 0.5rem;
+        .modal.active { display: flex; }
+        .modal-dialog {
+            width: min(850px,100%); max-height: min(92vh,900px); display: flex; flex-direction: column; overflow: hidden;
+            background: white; border-radius: 22px; box-shadow: 0 30px 80px rgba(5,20,52,.35); animation: modalIn .25s ease;
         }
-        
-        .empty-state p {
-            color: var(--gris);
+        .modal-dialog.narrow { width: min(520px,100%); }
+        @keyframes modalIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+        .modal-header {
+            min-height: 70px; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            color: white; background: linear-gradient(100deg,var(--azul-principal),#0877ff);
         }
-        
-        .refresh-btn {
-            background-color: var(--verde);
-            color: white;
-            border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.3s;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 0 auto;
+        .modal-header h2 { display: flex; align-items: center; gap: 9px; font-size: 1.03rem; }
+        .modal-close { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; color: white; background: rgba(255,255,255,.14); cursor: pointer; font-size: 1.15rem; }
+        .modal-body { min-height: 0; padding: 20px; overflow-y: auto; }
+        .details-hero { padding: 18px; border-radius: 16px; color: white; background: linear-gradient(135deg,var(--azul-principal),#0877ff); }
+        .details-hero small { display: inline-block; padding: 5px 9px; border-radius: 999px; background: rgba(255,255,255,.16); }
+        .details-hero h3 { margin-top: 10px; font-size: 1.35rem; }
+        .details-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 11px; margin: 15px 0; }
+        .detail-box { padding: 13px; border-radius: 12px; background: #f5f8fc; }
+        .detail-box small { display: block; color: var(--texto-suave); font-size: .7rem; }
+        .detail-box strong { display: block; margin-top: 4px; color: #29476f; font-size: .83rem; }
+        .description-box { padding: 16px; border-radius: 14px; color: #425b7a; background: var(--azul-claro); white-space: pre-wrap; overflow-wrap: anywhere; }
+        .files-section { margin-top: 18px; }
+        .files-section h3 { display: flex; align-items: center; gap: 8px; color: #17345f; font-size: .98rem; }
+        .file-card { margin-top: 12px; padding: 14px; border: 1px solid var(--borde); border-radius: 14px; background: #fbfcfe; }
+        .file-heading { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .file-heading i { color: var(--azul-secundario); font-size: 1.15rem; }
+        .file-heading div { min-width: 0; }
+        .file-heading strong { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #2a466d; font-size: .83rem; }
+        .file-heading small { color: var(--texto-suave); font-size: .7rem; }
+        .file-preview { margin-top: 12px; padding: 10px; overflow: hidden; border-radius: 12px; background: #eef3f9; }
+        .image-preview, .video-preview { display: block; width: 100%; max-height: 420px; object-fit: contain; border-radius: 9px; background: #0e1b2d; }
+        .pdf-preview { width: 100%; height: 430px; border: 0; border-radius: 9px; background: white; }
+        .no-preview { padding: 30px 15px; text-align: center; color: var(--texto-suave); }
+        .download-button {
+            min-height: 42px; margin-top: 11px; padding: 0 15px; display: inline-flex; align-items: center; gap: 8px;
+            border-radius: 11px; color: white; background: var(--verde); cursor: pointer; font-weight: 750;
         }
-        
-        .refresh-btn:hover {
-            background-color: #0da271;
+
+        .notification-list { display: grid; gap: 10px; }
+        .notification-item { display: grid; grid-template-columns: 44px minmax(0,1fr); gap: 12px; padding: 13px; border-radius: 13px; background: #f5f8fc; }
+        .notification-item-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 13px; color: var(--azul-secundario); background: #e1edff; }
+        .notification-item strong { display: block; color: #25446d; font-size: .84rem; }
+        .notification-item p { margin-top: 3px; color: var(--texto-suave); font-size: .75rem; }
+        .notification-item time { display: block; margin-top: 5px; color: #8b9bb2; font-size: .68rem; }
+        .notification-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+        .secondary-action {
+            min-height: 42px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; border-radius: 11px;
+            color: var(--azul-principal); background: #eaf2ff; cursor: pointer; font-weight: 750;
         }
-        
-        .note {
-            background-color: #fff3cd;
-            border: 1px solid #ffecb5;
-            color: #856404;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            text-align: center;
+
+        .toast-stack { position: fixed; z-index: 5000; top: 90px; right: 18px; width: min(390px,calc(100vw - 28px)); display: grid; gap: 10px; }
+        .toast {
+            padding: 14px 15px; display: grid; grid-template-columns: 38px minmax(0,1fr) auto; gap: 11px; align-items: center;
+            border-radius: 14px; background: white; border: 1px solid var(--borde); box-shadow: 0 18px 45px rgba(10,35,80,.22); animation: toastIn .25s ease;
         }
-        
-        /* Modal de detalles */
-        .details-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 1rem;
+        .toast-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; color: var(--azul-secundario); background: #eaf2ff; }
+        .toast strong { display: block; color: #214168; font-size: .82rem; }
+        .toast p { color: var(--texto-suave); font-size: .73rem; }
+        .toast button { color: #8a9ab0; background: none; cursor: pointer; }
+        @keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+
+        .loading-overlay { position: fixed; inset: 0; z-index: 4500; display: none; place-items: center; background: rgba(244,247,252,.9); backdrop-filter: blur(4px); }
+        .loading-overlay.active { display: grid; }
+        .loading-box { width: min(360px,calc(100% - 32px)); padding: 28px; text-align: center; border-radius: 20px; background: white; box-shadow: 0 22px 60px rgba(30,58,138,.2); }
+        .spinner { width: 48px; height: 48px; margin: 0 auto 14px; border: 4px solid #dce8fa; border-top-color: var(--azul-secundario); border-radius: 50%; animation: spin .8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-box h3 { color: #17345f; }
+        .loading-box p { margin-top: 5px; color: var(--texto-suave); font-size: .8rem; }
+
+        .mobile-bottom-nav { display: none; }
+
+        @media (max-width: 1180px) {
+            :root { --sidebar-width: 205px; }
+            .announcements-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+            .departments-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+            .dashboard-panels { grid-template-columns: 1fr; }
+            .filters-grid { grid-template-columns: 1fr 1fr; }
         }
-        
-        .details-modal.active {
-            display: flex;
-        }
-        
-        .details-content {
-            background-color: var(--blanco);
-            width: 90%;
-            max-width: 800px;
-            max-height: 90vh;
-            border-radius: 12px;
-            box-shadow: var(--sombra);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .details-header {
-            background-color: var(--azul-principal);
-            color: white;
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .details-header h3 {
-            font-size: 1.3rem;
-            margin: 0;
-        }
-        
-        .details-close {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.8rem;
-            cursor: pointer;
-            line-height: 1;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        
-        .details-close:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .details-body {
-            padding: 1.5rem;
-            overflow-y: auto;
-            flex: 1;
-        }
-        
-        .details-section {
-            margin-bottom: 1.5rem;
-        }
-        
-        .details-section h4 {
-            color: var(--azul-principal);
-            margin-bottom: 0.8rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--azul-claro);
-            font-size: 1.1rem;
-        }
-        
-        .detail-row {
-            display: flex;
-            margin-bottom: 0.8rem;
-        }
-        
-        .detail-label {
-            font-weight: 600;
-            min-width: 120px;
-            color: var(--gris-oscuro);
-        }
-        
-        .detail-value {
-            flex: 1;
-            color: var(--gris-oscuro);
-            line-height: 1.5;
-        }
-        
-        .file-preview-container {
-            margin-top: 1.5rem;
-        }
-        
-        .file-preview {
-            border: 1px solid var(--gris-claro);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 0.5rem;
-            background-color: var(--gris-claro);
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .image-preview {
-            max-width: 100%;
-            max-height: 300px;
-            display: block;
-            margin: 0 auto;
-            border-radius: 4px;
-        }
-        
-        .video-preview {
-            width: 100%;
-            max-height: 300px;
-            border-radius: 4px;
-        }
-        
-        .pdf-preview {
-            width: 100%;
-            height: 400px;
-            border: none;
-            border-radius: 4px;
-        }
-        
-        .no-preview {
-            text-align: center;
-            padding: 2rem;
-            color: var(--gris);
-            font-size: 0.9rem;
-        }
-        
-        .preview-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-        
-        .preview-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .preview-download-btn {
-            background-color: var(--verde);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: background-color 0.3s;
-        }
-        
-        .preview-download-btn:hover {
-            background-color: #0da271;
-        }
-        
-        .view-more {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background-color: var(--azul-secundario);
-            color: white;
-            border: none;
-            padding: 0.3rem 0.8rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        
-        .view-more:hover {
-            background-color: #2563eb;
-        }
-        
-        .files-count {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: var(--morado);
-            color: white;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 500;
-        }
-        
-        /* Modal de carga */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 3000;
-            flex-direction: column;
-        }
-        
-        .loading-overlay.active {
-            display: flex;
-        }
-        
-        .loading-overlay-content {
-            text-align: center;
-            padding: 2rem;
-            background-color: var(--blanco);
-            border-radius: 8px;
-            box-shadow: var(--sombra);
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .loading-overlay-icon {
-            font-size: 3rem;
-            color: var(--azul-principal);
-            margin-bottom: 1rem;
-            animation: pulse 1.5s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 0.8rem;
-                margin: 1rem auto;
+        @media (max-width: 820px) {
+            :root { --header-height: 68px; }
+            .header-inner { min-height: var(--header-height); padding: 8px 13px; }
+            .brand-logo { width: 46px; height: 46px; border-radius: 13px; }
+            .brand-copy strong { font-size: .94rem; }
+            .brand-copy small { font-size: .68rem; }
+            .header-actions .button-label { display: none; }
+            .install-btn, .header-button { width: 43px; min-height: 43px; padding: 0; }
+            .app-shell { display: block; }
+            .sidebar { display: none; }
+            .container { width: min(100% - 24px,760px); padding: 18px 0 98px; }
+            .dashboard-heading { align-items: flex-start; }
+            .dashboard-hero { grid-template-columns: minmax(0,1fr) 128px; min-height: 235px; }
+            .hero-mark img { border-radius: 25px; }
+            .stats-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+            .departments-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+            .mobile-bottom-nav {
+                position: fixed; z-index: 1800; left: 10px; right: 10px; bottom: max(10px,env(safe-area-inset-bottom));
+                min-height: 68px; padding: 7px 8px; display: grid; grid-template-columns: repeat(5,1fr); align-items: center;
+                background: rgba(255,255,255,.96); border: 1px solid rgba(210,220,236,.9); border-radius: 20px;
+                box-shadow: 0 18px 50px rgba(20,46,94,.24); backdrop-filter: blur(14px);
             }
-            
-            .announcements-container {
-                grid-template-columns: 1fr;
+            .mobile-nav-button {
+                position: relative; min-width: 0; min-height: 52px; display: grid; place-items: center; align-content: center; gap: 2px;
+                border-radius: 13px; color: #70829c; background: transparent; cursor: pointer; font-size: .64rem;
             }
-            
-            .announcement-details {
-                grid-template-columns: 1fr;
-            }
-            
-            .filters {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .filter-group {
-                width: 100%;
-            }
-            
-            .logo h1 {
-                font-size: 1.4rem;
-            }
-            
-            .announcement-header {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            
-            .announcement-title {
-                font-size: 1.1rem;
-            }
-            
-            .counter {
-                font-size: 0.8rem;
-                padding: 0.6rem 1rem;
-                max-width: 250px;
-            }
-            
-            .details-content {
-                width: 95%;
-                max-height: 85vh;
-            }
-            
-            .details-header {
-                padding: 1rem;
-            }
-            
-            .details-body {
-                padding: 1rem;
-            }
-            
-            .detail-row {
-                flex-direction: column;
-                gap: 0.3rem;
-            }
-            
-            .detail-label {
-                min-width: auto;
-            }
-            
-            .pdf-preview {
-                height: 300px;
-            }
+            .mobile-nav-button i { font-size: 1.15rem; }
+            .mobile-nav-button.active { color: var(--azul-secundario); background: #edf5ff; }
+            .mobile-nav-button.primary-mobile { width: 54px; height: 54px; min-height: 54px; margin: -25px auto 0; color: white; background: var(--azul-secundario); border-radius: 50%; box-shadow: 0 10px 25px rgba(59,130,246,.35); }
+            .mobile-nav-badge { position: absolute; top: 2px; right: 16%; min-width: 17px; height: 17px; padding: 0 4px; display: none; place-items: center; border-radius: 999px; color: white; background: var(--rojo); font-size: .58rem; font-weight: 800; }
+            .mobile-nav-badge.active { display: grid; }
         }
-        
-        @media (max-width: 480px) {
-            .header {
-                padding: 1rem;
-            }
-            
-            .logo {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            
-            .logo h1 {
-                font-size: 1.2rem;
-            }
-            
-            .subtitle {
-                font-size: 0.9rem;
-            }
-            
-            .info-box {
-                padding: 1.5rem;
-            }
-            
-            .announcement-card {
-                padding: 1.2rem;
-            }
-            
-            .announcement-title {
-                font-size: 1rem;
-            }
-            
-            .announcement-description {
-                font-size: 0.85rem;
-                padding: 0.8rem;
-            }
+        @media (max-width: 620px) {
+            .dashboard-heading { display: block; }
+            .live-chip { margin-top: 10px; }
+            .dashboard-hero { min-height: 310px; grid-template-columns: minmax(0,1fr) 88px; gap: 10px; padding: 23px 20px; }
+            .hero-copy blockquote { font-size: 1.25rem; }
+            .hero-mark img { width: 82px; border-radius: 19px; }
+            .stats-grid { gap: 10px; }
+            .stat-card { min-height: 91px; padding: 14px; }
+            .stat-card strong { font-size: 1.4rem; }
+            .stat-icon { width: 42px; height: 42px; }
+            .announcements-grid { grid-template-columns: 1fr; }
+            .filters-grid { grid-template-columns: 1fr; }
+            .section-title-row { display: block; }
+            .section-title-row .primary-action { margin-top: 11px; }
+            .departments-grid { gap: 10px; }
+            .department-card { min-height: 130px; padding: 14px 10px; }
+            .details-grid { grid-template-columns: 1fr; }
+            .modal { padding: 8px; }
+            .modal-dialog { max-height: 96vh; border-radius: 18px; }
+            .modal-header { padding: 13px 15px; }
+            .modal-body { padding: 15px; }
+            .pdf-preview { height: 330px; }
+            .toast-stack { top: 76px; right: 8px; width: calc(100vw - 16px); }
+        }
+        @media (max-width: 390px) {
+            .brand-copy small { display: none; }
+            .brand-copy strong { max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+            .dashboard-hero { grid-template-columns: 1fr; }
+            .hero-mark { display: none; }
+            .hero-actions { display: grid; grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stat-card { display: block; }
+            .stat-icon { margin-top: 9px; }
+            .departments-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
-    
-    <!-- Firebase SDK version 12.7.0 - MISMA CONFIGURACIÓN -->
+
+    <!-- Firebase SDK 12.7.0: misma configuración del Gestor de Anuncios. -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
-        
-        // MISMA configuración de Firebase que la app principal
+
         const firebaseConfig = {
             apiKey: "AIzaSyBLASmgZ4vwEyUEJ-A2xx3pihcgvipEaiE",
             authDomain: "iglesia-anuncios.firebaseapp.com",
@@ -730,645 +439,815 @@
             messagingSenderId: "6291270000",
             appId: "1:6291270000:web:abb42fefab0c938a1ec7b5"
         };
-        
+
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
-        
         window.firebaseDatabase = database;
         window.firebaseRef = ref;
         window.firebaseOnValue = onValue;
+        window.dispatchEvent(new Event("firebase-ready"));
     </script>
 </head>
 <body>
-    <!-- Modal de detalles -->
-    <div id="detailsModal" class="details-modal">
-        <div class="details-content">
-            <div class="details-header">
-                <h3>Detalles del Anuncio</h3>
-                <button id="closeDetailsBtn" class="details-close">×</button>
-            </div>
-            <div class="details-body" id="detailsBody">
-                <!-- Los detalles se cargarán aquí dinámicamente -->
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal de carga -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-overlay-content">
-            <div class="loading-overlay-icon">⏳</div>
-            <h3 id="loadingTitle">Cargando...</h3>
-            <p id="loadingMessage">Por favor espera mientras se cargan los detalles.</p>
-        </div>
-    </div>
-
-    <header class="header">
-        <div class="logo">
-            <div class="logo-icon">⛪</div>
-            <div>
-                <h1>Iglesia Monte Sion</h1>
-                <div class="subtitle">Anuncios y Actividades - Actualizados en tiempo real</div>
+    <header class="app-header">
+        <div class="header-inner">
+            <button class="brand" type="button" data-nav="home" aria-label="Ir al inicio">
+                <img class="brand-logo" src="./icon/logo.png" alt="Icono de Anuncios Públicos">
+                <span class="brand-copy">
+                    <strong>Anuncios Públicos</strong>
+                    <small>Iglesia Monte Sion</small>
+                </span>
+            </button>
+            <div class="header-actions">
+                <button id="notificationHeaderBtn" class="header-button notification-button" type="button" title="Notificaciones">
+                    <i class="bi bi-bell" aria-hidden="true"></i>
+                    <span id="notificationBadge" class="notification-badge">0</span>
+                </button>
+                <button id="installBtn" class="install-btn" type="button" title="Instalar aplicación">
+                    <i class="bi bi-download" aria-hidden="true"></i>
+                    <span class="button-label">Instalar</span>
+                </button>
             </div>
         </div>
     </header>
 
-    <main class="container">
-        <div class="info-box">
-            <h2>📢 Anuncios de la Semana</h2>
-            <p>Consulta aquí todas las actividades y anuncios de los diferentes departamentos de la Iglesia Monte Sion.</p>
-            <p>Si tienes alguna duda sobre algún anuncio, acércate al director del departamento correspondiente.</p>
-            <div id="syncStatus" class="status-indicator">
-                <div class="status-dot"></div>
-                <span id="syncStatusText">Conectando con la base de datos...</span>
+    <div class="app-shell">
+        <aside class="sidebar" aria-label="Navegación principal">
+            <p class="sidebar-label">Principal</p>
+            <nav class="sidebar-nav">
+                <button class="sidebar-link active" type="button" data-nav="home"><i class="bi bi-house-door"></i><span>Inicio</span></button>
+                <button class="sidebar-link" type="button" data-nav="announcements"><i class="bi bi-megaphone"></i><span>Anuncios</span></button>
+                <button class="sidebar-link" type="button" data-nav="departments"><i class="bi bi-folder"></i><span>Departamentos</span></button>
+                <button class="sidebar-link" type="button" data-nav="notifications"><i class="bi bi-bell"></i><span>Notificaciones</span></button>
+            </nav>
+            <div class="sidebar-divider"></div>
+            <p class="sidebar-label">Aplicación</p>
+            <nav class="sidebar-nav">
+                <button class="sidebar-link" type="button" data-nav="install"><i class="bi bi-phone"></i><span>Instalar aplicación</span></button>
+                <button class="sidebar-link" type="button" id="enableNotificationsSidebar"><i class="bi bi-bell-fill"></i><span>Activar avisos</span></button>
+            </nav>
+            <div class="sidebar-info">
+                <i class="bi bi-broadcast-pin" aria-hidden="true"></i>
+                <strong>Actualización en tiempo real</strong>
+                <p>Los anuncios aparecen automáticamente cuando el administrador los publica desde el gestor.</p>
             </div>
-        </div>
+        </aside>
 
-        <div class="filters">
-            <div class="filter-group">
-                <label for="departmentFilter">🏢 Departamento:</label>
-                <select id="departmentFilter">
-                    <option value="todos">Todos los departamentos</option>
-                    <option value="Ministerio Joven">Ministerio Joven (JA y Clubes)</option>
-                    <option value="JA">JA - Jóvenes Adventistas</option>
-                    <option value="Aventureros">Aventureros</option>
-                    <option value="Conquistadores">Conquistadores</option>
-                    <option value="Guías Mayores">Guías Mayores</option>
-                    <option value="Ministerio Infantil">Ministerio Infantil</option>
-                    <option value="Escuela Sabática">Escuela Sabática</option>
-                    <option value="Ministerio de la Mujer">Ministerio de la Mujer</option>
-                    <option value="Ministerio de la Familia">Ministerio de la Familia</option>
-                    <option value="Ministerio Personal">Ministerio Personal</option>
-                    <option value="Mayordomía Cristiana">Mayordomía Cristiana</option>
-                    <option value="Ministerio de Salud">Ministerio de Salud</option>
-                    <option value="Comunicación">Comunicación</option>
-                    <option value="Director de Canto">Director de Canto</option>
-                    <option value="Director de Sonido">Director de Sonido</option>
-                    <option value="Dorcas">Dorcas</option>
-                    <option value="Libertad Religiosa">Libertad Religiosa</option>
-                    <option value="Diáconos y Diaconisas">Diáconos y Diaconisas</option>
-                    <option value="Ancianos de Iglesia">Ancianos de Iglesia</option>
-                    <option value="Secretaría de Iglesia">Secretaría de Iglesia</option>
-                    <option value="Tesoreria">Tesoreria</option>
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label for="sortFilter">📅 Ordenar por:</label>
-                <select id="sortFilter">
-                    <option value="date_asc">Fecha (próximos primero)</option>
-                    <option value="date_desc">Fecha (más lejanos primero)</option>
-                    <option value="newest">Más recientes</option>
-                </select>
-            </div>
-            
-            <button id="refreshBtn" class="refresh-btn">
-                <span>🔄 Actualizar</span>
-            </button>
-        </div>
+        <div class="workspace">
+            <main class="container">
+                <section id="homeView" class="app-view active">
+                    <div class="dashboard-heading">
+                        <div>
+                            <h1>Inicio</h1>
+                            <p>Consulta los anuncios y actividades publicados para la iglesia.</p>
+                        </div>
+                        <span id="liveChip" class="live-chip"><span class="live-dot"></span><span id="connectionText">Conectando...</span></span>
+                    </div>
 
-        <div id="announcementCounter" class="counter" style="display: none;">
-            <span id="counterText"></span>
-        </div>
+                    <div class="dashboard-hero">
+                        <div class="hero-copy">
+                            <span class="hero-eyebrow"><i class="bi bi-buildings"></i> Iglesia Monte Sion</span>
+                            <blockquote>“Pues donde están dos o tres congregados en mi nombre, allí estoy yo en medio de ellos.”</blockquote>
+                            <cite>Mateo 18:20</cite>
+                            <div class="hero-actions">
+                                <button class="hero-button primary" type="button" data-nav="announcements"><i class="bi bi-megaphone"></i> Ver anuncios</button>
+                                <button class="hero-button secondary" type="button" id="enableNotificationsHero"><i class="bi bi-bell"></i> Activar notificaciones</button>
+                            </div>
+                        </div>
+                        <div class="hero-mark"><img src="./icon/logo.png" alt="Icono de la aplicación pública"></div>
+                    </div>
 
-        <div id="announcementsContainer" class="announcements-container">
-            <div class="empty-state" id="emptyMessage">
-                <div class="empty-state-icon">📭</div>
-                <h3>No hay anuncios disponibles</h3>
-                <p>Los anuncios aparecerán aquí cuando sean publicados por los líderes.</p>
-                <div class="note">
-                    Si tienes alguna duda, acércate al director del departamento correspondiente.
+                    <div class="stats-grid" aria-label="Resumen">
+                        <article class="stat-card"><div><small>Anuncios publicados</small><strong id="statAnnouncements">0</strong></div><span class="stat-icon"><i class="bi bi-megaphone"></i></span></article>
+                        <article class="stat-card"><div><small>Próximas actividades</small><strong id="statUpcoming">0</strong></div><span class="stat-icon"><i class="bi bi-calendar-event"></i></span></article>
+                        <article class="stat-card"><div><small>Departamentos</small><strong id="statDepartments">0</strong></div><span class="stat-icon"><i class="bi bi-folder"></i></span></article>
+                        <article class="stat-card"><div><small>Archivos disponibles</small><strong id="statFiles">0</strong></div><span class="stat-icon"><i class="bi bi-paperclip"></i></span></article>
+                    </div>
+
+                    <div class="dashboard-panels">
+                        <section class="panel">
+                            <div class="panel-header"><h2><i class="bi bi-clock-history"></i> Anuncios recientes</h2><button class="link-button" type="button" data-nav="announcements">Ver todos <i class="bi bi-chevron-right"></i></button></div>
+                            <div id="recentList" class="mini-list"></div>
+                        </section>
+                        <section class="panel">
+                            <div class="panel-header"><h2><i class="bi bi-calendar3"></i> Próximas fechas</h2></div>
+                            <div id="upcomingList" class="mini-list"></div>
+                        </section>
+                    </div>
+                </section>
+
+                <section id="announcementsView" class="app-view">
+                    <div class="section-title-row">
+                        <div><h1>Anuncios públicos</h1><p>Busca, filtra y abre cada anuncio para consultar sus detalles y archivos.</p></div>
+                        <button id="refreshBtn" class="primary-action" type="button"><i class="bi bi-arrow-clockwise"></i> Actualizar</button>
+                    </div>
+                    <div class="filter-panel">
+                        <div class="filters-grid">
+                            <div class="filter-group"><label for="searchInput">Buscar anuncio</label><div class="input-shell"><i class="bi bi-search"></i><input id="searchInput" type="search" placeholder="Título, descripción o autor"></div></div>
+                            <div class="filter-group"><label for="departmentFilter">Departamento</label><select id="departmentFilter"><option value="todos">Todos los departamentos</option></select></div>
+                            <div class="filter-group"><label for="sortFilter">Ordenar por</label><select id="sortFilter"><option value="date_asc">Próximos primero</option><option value="date_desc">Más lejanos primero</option><option value="newest">Publicados recientemente</option></select></div>
+                            <button id="clearFiltersBtn" class="secondary-action" type="button"><i class="bi bi-eraser"></i> Limpiar</button>
+                        </div>
+                    </div>
+                    <p id="counterLine" class="counter-line"></p>
+                    <div id="announcementsGrid" class="announcements-grid"></div>
+                </section>
+
+                <section id="departmentsView" class="app-view">
+                    <div class="section-title-row"><div><h1>Departamentos</h1><p>Selecciona un departamento para consultar únicamente sus anuncios.</p></div></div>
+                    <div id="departmentsGrid" class="departments-grid"></div>
+                </section>
+
+                <section id="notificationsView" class="app-view">
+                    <div class="section-title-row"><div><h1>Notificaciones</h1><p>Avisos generados cuando se publica un nuevo anuncio.</p></div></div>
+                    <section class="section-card">
+                        <div class="section-header"><h2><i class="bi bi-bell"></i> Centro de avisos</h2></div>
+                        <div class="modal-body">
+                            <div class="notification-actions">
+                                <button id="enableNotificationsView" class="primary-action" type="button"><i class="bi bi-bell-fill"></i> Activar notificaciones</button>
+                                <button id="markReadBtn" class="secondary-action" type="button"><i class="bi bi-check2-all"></i> Marcar como vistas</button>
+                            </div>
+                            <div id="notificationList" class="notification-list"></div>
+                        </div>
+                    </section>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <nav class="mobile-bottom-nav" aria-label="Navegación móvil">
+        <button class="mobile-nav-button active" type="button" data-nav="home"><i class="bi bi-house-door"></i><span>Inicio</span></button>
+        <button class="mobile-nav-button" type="button" data-nav="announcements"><i class="bi bi-megaphone"></i><span>Anuncios</span></button>
+        <button class="mobile-nav-button primary-mobile" type="button" data-nav="notifications" aria-label="Notificaciones"><i class="bi bi-bell"></i><span id="mobileNotificationBadge" class="mobile-nav-badge">0</span></button>
+        <button class="mobile-nav-button" type="button" data-nav="departments"><i class="bi bi-folder"></i><span>Departamentos</span></button>
+        <button class="mobile-nav-button" type="button" data-nav="install"><i class="bi bi-phone"></i><span>Instalar</span></button>
+    </nav>
+
+    <div id="detailsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="detailsModalTitle">
+        <div class="modal-dialog">
+            <div class="modal-header"><h2 id="detailsModalTitle"><i class="bi bi-megaphone"></i> Detalles del anuncio</h2><button class="modal-close" type="button" data-close-modal="detailsModal" aria-label="Cerrar"><i class="bi bi-x-lg"></i></button></div>
+            <div id="detailsBody" class="modal-body"></div>
+        </div>
+    </div>
+
+    <div id="installModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="installModalTitle">
+        <div class="modal-dialog narrow">
+            <div class="modal-header"><h2 id="installModalTitle"><i class="bi bi-phone"></i> Instalar aplicación</h2><button class="modal-close" type="button" data-close-modal="installModal" aria-label="Cerrar"><i class="bi bi-x-lg"></i></button></div>
+            <div class="modal-body">
+                <div class="empty-state" style="min-height:0; box-shadow:none; border:0; padding:10px;">
+                    <div><div class="empty-state-icon"><i class="bi bi-download"></i></div><h3>Guárdala en tu teléfono</h3><p id="installHelpText">Utiliza la opción de instalación del navegador para agregar esta aplicación a la pantalla de inicio.</p><button id="installModalAction" class="primary-action" type="button" style="margin-top:16px;"><i class="bi bi-download"></i> Instalar ahora</button></div>
                 </div>
             </div>
         </div>
-        
-        <div class="note">
-            <strong>📌 Nota:</strong> Estos son los anuncios de la Iglesia Monte Sion. Si tienes alguna duda sobre algún anuncio, por favor acércate al director del departamento correspondiente.
-        </div>
-    </main>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay"><div class="loading-box"><div class="spinner"></div><h3 id="loadingTitle">Cargando anuncios</h3><p id="loadingMessage">Conectando con la base de datos...</p></div></div>
+    <div id="toastStack" class="toast-stack" aria-live="polite"></div>
 
     <script>
+        "use strict";
+
+        const PUBLIC_ANNOUNCEMENTS_PATH = "publicAnnouncements";
+        const PUBLIC_NOTIFICATIONS_PATH = "publicNotifications";
+        const LAST_SEEN_NOTIFICATION_KEY = "monteSionPublicLastSeenNotification";
+
         let announcements = [];
+        let notifications = [];
         let filteredAnnouncements = [];
-        let currentFilters = {
-            department: 'todos',
-            sortBy: 'date_asc'
+        let currentView = "home";
+        let deferredInstallPrompt = null;
+        let notificationsInitialized = false;
+        let firebaseListenersStarted = false;
+        let lastSeenNotificationAt = localStorage.getItem(LAST_SEEN_NOTIFICATION_KEY) || "";
+        const filters = { search: "", department: "todos", sort: "date_asc" };
+
+        const $ = (id) => document.getElementById(id);
+        const views = {
+            home: $("homeView"),
+            announcements: $("announcementsView"),
+            departments: $("departmentsView"),
+            notifications: $("notificationsView")
         };
 
-        const departmentFilter = document.getElementById('departmentFilter');
-        const sortFilter = document.getElementById('sortFilter');
-        const refreshBtn = document.getElementById('refreshBtn');
-        const announcementsContainer = document.getElementById('announcementsContainer');
-        const emptyMessage = document.getElementById('emptyMessage');
-        const syncStatus = document.getElementById('syncStatus');
-        const syncStatusText = document.getElementById('syncStatusText');
-        const announcementCounter = document.getElementById('announcementCounter');
-        const counterText = document.getElementById('counterText');
-        const detailsModal = document.getElementById('detailsModal');
-        const closeDetailsBtn = document.getElementById('closeDetailsBtn');
-        const detailsBody = document.getElementById('detailsBody');
-        const loadingOverlay = document.getElementById('loadingOverlay');
+        const departmentIcons = {
+            "Ministerio Joven": "bi-people",
+            "JA": "bi-person-plus",
+            "Aventureros": "bi-balloon",
+            "Conquistadores": "bi-compass",
+            "Guías Mayores": "bi-award",
+            "Ministerio Infantil": "bi-balloon-heart",
+            "Escuela Sabática": "bi-book",
+            "Ministerio Personal": "bi-person-heart",
+            "Ministerio de la Mujer": "bi-person",
+            "Ministerio de la Familia": "bi-people-fill",
+            "Mayordomía Cristiana": "bi-wallet2",
+            "Ministerio de Salud": "bi-heart-pulse",
+            "Comunicación": "bi-broadcast-pin",
+            "Director de Canto": "bi-music-note-beamed",
+            "Director de Sonido": "bi-volume-up",
+            "Dorcas": "bi-bag-heart",
+            "Libertad Religiosa": "bi-shield-check",
+            "Diáconos y Diaconisas": "bi-person-check",
+            "Ancianos de Iglesia": "bi-person-badge",
+            "Secretaría": "bi-journal-text",
+            "Secretaría de Iglesia": "bi-journal-text",
+            "Tesorería": "bi-cash-coin",
+            "Tesoreria": "bi-cash-coin"
+        };
 
-        // Departamentos que pertenecen a Ministerio Joven
-        const ministerioJovenDepartments = ['JA', 'Aventureros', 'Conquistadores', 'Guías Mayores', 'Ministerio Joven'];
-
-        // Función para convertir hora de 24h a 12h con AM/PM
-        function convertTo12Hour(time) {
-            if (!time) return 'No especificada';
-            
-            try {
-                const [hours, minutes] = time.split(':');
-                let hour = parseInt(hours);
-                const ampm = hour >= 12 ? 'PM' : 'AM';
-                
-                hour = hour % 12;
-                hour = hour === 0 ? 12 : hour;
-                
-                return `${hour}:${minutes} ${ampm}`;
-            } catch (e) {
-                return time;
-            }
+        function escapeHTML(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
         }
 
-        // Función para formatear tamaño de archivo
+        function normalizeId(value) {
+            const numeric = Number(value);
+            return Number.isFinite(numeric) ? numeric : String(value);
+        }
+
+        function parseLocalDate(dateString) {
+            if (!dateString) return null;
+            const parts = String(dateString).split("-").map(Number);
+            if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+            return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
+        function eventStartDate(announcement) {
+            const date = parseLocalDate(announcement.date);
+            if (!date) return new Date(0);
+            if (announcement.time) {
+                const [hours, minutes] = announcement.time.split(":").map(Number);
+                date.setHours(Number.isFinite(hours) ? hours : 0, Number.isFinite(minutes) ? minutes : 0, 0, 0);
+            }
+            return date;
+        }
+
+        function formatDate(dateString, compact = false) {
+            const date = parseLocalDate(dateString);
+            if (!date) return "No especificada";
+            return date.toLocaleDateString("es-MX", compact
+                ? { day: "2-digit", month: "short", year: "numeric" }
+                : { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+        }
+
+        function formatTime(time) {
+            if (!time) return "No especificada";
+            const [hours, minutes] = String(time).split(":");
+            let hour = Number(hours);
+            if (!Number.isFinite(hour)) return time;
+            const suffix = hour >= 12 ? "PM" : "AM";
+            hour %= 12;
+            if (hour === 0) hour = 12;
+            return `${hour}:${minutes || "00"} ${suffix}`;
+        }
+
+        function formatTimestamp(value) {
+            if (!value) return "Fecha no disponible";
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return String(value);
+            return date.toLocaleString("es-MX", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+        }
+
         function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            const number = Number(bytes) || 0;
+            if (!number) return "0 Bytes";
+            const units = ["Bytes", "KB", "MB", "GB"];
+            const index = Math.min(Math.floor(Math.log(number) / Math.log(1024)), units.length - 1);
+            return `${(number / Math.pow(1024, index)).toFixed(index ? 2 : 0)} ${units[index]}`;
         }
 
-        // Función para obtener icono según tipo de archivo
-        function getFileIcon(fileType) {
-            if (fileType.startsWith('image/')) return '🖼️';
-            if (fileType.startsWith('video/')) return '🎬';
-            if (fileType === 'application/pdf') return '📄';
-            if (fileType.includes('word') || fileType.includes('document')) return '📝';
-            if (fileType.includes('excel') || fileType.includes('spreadsheet')) return '📊';
-            if (fileType.includes('powerpoint') || fileType.includes('presentation')) return '📽️';
-            return '📎';
+        function getFileIcon(type = "") {
+            if (type.startsWith("image/")) return "bi-file-earmark-image";
+            if (type.startsWith("video/")) return "bi-file-earmark-play";
+            if (type === "application/pdf") return "bi-file-earmark-pdf";
+            if (type.includes("word") || type.includes("document")) return "bi-file-earmark-word";
+            if (type.includes("excel") || type.includes("spreadsheet")) return "bi-file-earmark-excel";
+            if (type.includes("powerpoint") || type.includes("presentation")) return "bi-file-earmark-slides";
+            return "bi-paperclip";
         }
 
-        // Función para obtener nombre del tipo de archivo
-        function getFileTypeName(fileType) {
-            if (fileType.startsWith('image/')) return 'Imagen';
-            if (fileType.startsWith('video/')) return 'Video';
-            if (fileType === 'application/pdf') return 'Documento PDF';
-            if (fileType.includes('word') || fileType.includes('document')) return 'Documento Word';
-            if (fileType.includes('excel') || fileType.includes('spreadsheet')) return 'Hoja de cálculo Excel';
-            if (fileType.includes('powerpoint') || fileType.includes('presentation')) return 'Presentación PowerPoint';
-            return 'Archivo';
+        function getFileTypeName(type = "") {
+            if (type.startsWith("image/")) return "Imagen";
+            if (type.startsWith("video/")) return "Video";
+            if (type === "application/pdf") return "Documento PDF";
+            if (type.includes("word") || type.includes("document")) return "Documento Word";
+            if (type.includes("excel") || type.includes("spreadsheet")) return "Hoja de cálculo";
+            if (type.includes("powerpoint") || type.includes("presentation")) return "Presentación";
+            return "Archivo";
         }
 
-        // Función para formatear fecha correctamente
-        function formatDate(dateString) {
-            try {
-                // Dividir la fecha en partes
-                const [year, month, day] = dateString.split('-');
-                
-                // Crear objeto Date con la fecha correcta
-                const date = new Date(year, month - 1, day);
-                
-                // Formatear en español
-                return date.toLocaleDateString('es-ES', {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                });
-            } catch (error) {
-                console.error("Error al formatear fecha:", error);
-                return dateString;
-            }
+        function getDepartmentIcon(department) {
+            return departmentIcons[department] || "bi-megaphone";
         }
 
-        // Función para mostrar overlay de carga
-        function showLoadingOverlay(title = 'Cargando...', message = 'Por favor espera.') {
-            document.getElementById('loadingTitle').textContent = title;
-            document.getElementById('loadingMessage').textContent = message;
-            loadingOverlay.classList.add('active');
+        function isUpcoming(announcement) {
+            const eventDate = eventStartDate(announcement);
+            const now = new Date();
+            now.setHours(0,0,0,0);
+            return eventDate >= now;
         }
 
-        // Función para ocultar overlay de carga
-        function hideLoadingOverlay() {
-            loadingOverlay.classList.remove('active');
+        function showLoading(title = "Cargando...", message = "Por favor espera.") {
+            $("loadingTitle").textContent = title;
+            $("loadingMessage").textContent = message;
+            $("loadingOverlay").classList.add("active");
         }
 
-        function initApp() {
-            syncStatusText.textContent = 'Conectando con la base de datos...';
-            loadAnnouncementsFromFirebase();
-            setupEventListeners();
+        function hideLoading() { $("loadingOverlay").classList.remove("active"); }
+
+        function showToast(title, message, icon = "bi-info-circle") {
+            const toast = document.createElement("article");
+            toast.className = "toast";
+            toast.innerHTML = `<span class="toast-icon"><i class="bi ${escapeHTML(icon)}"></i></span><div><strong>${escapeHTML(title)}</strong><p>${escapeHTML(message)}</p></div><button type="button" aria-label="Cerrar"><i class="bi bi-x-lg"></i></button>`;
+            const close = () => toast.remove();
+            toast.querySelector("button").addEventListener("click", close);
+            $("toastStack").appendChild(toast);
+            setTimeout(close, 5200);
         }
 
-        function updateConnectionStatus(connected) {
-            if (connected) {
-                syncStatus.classList.add('online');
-                syncStatus.classList.remove('offline');
-                const dot = syncStatus.querySelector('.status-dot');
-                dot.classList.add('online');
-                dot.classList.remove('offline');
-            } else {
-                syncStatus.classList.add('offline');
-                syncStatus.classList.remove('online');
-                const dot = syncStatus.querySelector('.status-dot');
-                dot.classList.add('offline');
-                dot.classList.remove('online');
-            }
+        function openModal(id) {
+            const modal = $(id);
+            if (!modal) return;
+            modal.classList.add("active");
+            document.body.classList.add("modal-open");
         }
 
-        function loadAnnouncementsFromFirebase() {
-            if (!window.firebaseDatabase) {
-                syncStatusText.textContent = 'Error: Firebase no inicializado';
+        function closeModal(id) {
+            const modal = $(id);
+            if (!modal) return;
+            modal.classList.remove("active");
+            if (!document.querySelector(".modal.active")) document.body.classList.remove("modal-open");
+        }
+
+        function showView(viewName) {
+            if (viewName === "install") {
+                openInstallFlow();
                 return;
             }
-            
-            try {
-                const announcementsRef = window.firebaseRef(window.firebaseDatabase, 'announcements');
-                
-                window.firebaseOnValue(announcementsRef, (snapshot) => {
-                    const data = snapshot.val();
-                    
-                    if (data) {
-                        announcements = Object.values(data);
-                        announcements.sort((a, b) => b.id - a.id);
-                        
-                        syncStatusText.textContent = `Conectado - ${announcements.length} anuncios`;
-                        updateConnectionStatus(true);
-                        applyFilters();
-                        
-                    } else {
-                        announcements = [];
-                        syncStatusText.textContent = 'Conectado - Sin anuncios';
-                        updateConnectionStatus(true);
-                        applyFilters();
-                    }
-                }, (error) => {
-                    console.error("Error:", error);
-                    syncStatusText.textContent = 'Error de conexión';
-                    updateConnectionStatus(false);
-                });
-                
-            } catch (error) {
-                console.error("Error crítico:", error);
-                syncStatusText.textContent = 'Error crítico de conexión';
-                updateConnectionStatus(false);
-            }
+            if (!views[viewName]) viewName = "home";
+            currentView = viewName;
+            Object.entries(views).forEach(([name, element]) => element.classList.toggle("active", name === viewName));
+            document.querySelectorAll("[data-nav]").forEach((button) => button.classList.toggle("active", button.dataset.nav === viewName));
+            if (viewName === "notifications") markNotificationsSeen();
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
-        function setupEventListeners() {
-            departmentFilter.addEventListener('change', (e) => {
-                currentFilters.department = e.target.value;
-                applyFilters();
+        function setConnectionStatus(connected, message) {
+            $("connectionText").textContent = message;
+            $("liveChip").style.background = connected ? "#dcfce7" : "#fee2e2";
+            $("liveChip").style.color = connected ? "#166534" : "#991b1b";
+            const dot = $("liveChip").querySelector(".live-dot");
+            dot.style.background = connected ? "#16a34a" : "#ef4444";
+        }
+
+        function loadPublicAnnouncements() {
+            if (!window.firebaseDatabase) return;
+            const reference = window.firebaseRef(window.firebaseDatabase, PUBLIC_ANNOUNCEMENTS_PATH);
+            window.firebaseOnValue(reference, (snapshot) => {
+                const data = snapshot.val();
+                announcements = data ? Object.values(data).filter((item) => item && item.status !== "hidden") : [];
+                announcements = announcements.map((item) => ({ ...item, id: normalizeId(item.id) }));
+                announcements.sort((a,b) => new Date(b.publishedAt || b.createdAt || 0) - new Date(a.publishedAt || a.createdAt || 0));
+                setConnectionStatus(true, `Conectado · ${announcements.length} anuncios`);
+                renderAll();
+                hideLoading();
+                openAnnouncementFromUrl();
+            }, (error) => {
+                console.error("Error leyendo anuncios públicos:", error);
+                setConnectionStatus(false, "Error de conexión");
+                hideLoading();
+                renderAll();
+                showToast("Sin conexión", "No fue posible actualizar los anuncios.", "bi-wifi-off");
             });
-            
-            sortFilter.addEventListener('change', (e) => {
-                currentFilters.sortBy = e.target.value;
-                applyFilters();
-            });
-            
-            refreshBtn.addEventListener('click', () => {
-                syncStatusText.textContent = 'Actualizando...';
-                loadAnnouncementsFromFirebase();
-            });
-            
-            // Cerrar modal de detalles
-            closeDetailsBtn.addEventListener('click', closeDetailsModal);
-            
-            // Cerrar modal de detalles al hacer clic fuera
-            detailsModal.addEventListener('click', (e) => {
-                if (e.target === detailsModal) {
-                    closeDetailsModal();
+        }
+
+        function loadPublicNotifications() {
+            if (!window.firebaseDatabase) return;
+            const reference = window.firebaseRef(window.firebaseDatabase, PUBLIC_NOTIFICATIONS_PATH);
+            window.firebaseOnValue(reference, (snapshot) => {
+                const data = snapshot.val();
+                const previousNewest = notifications[0]?.createdAt || "";
+                notifications = data ? Object.values(data).filter((item) => item && item.status !== "hidden") : [];
+                notifications.sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+                renderNotifications();
+
+                if (!notificationsInitialized) {
+                    notificationsInitialized = true;
+                    if (!lastSeenNotificationAt && notifications[0]?.createdAt) {
+                        lastSeenNotificationAt = notifications[0].createdAt;
+                        localStorage.setItem(LAST_SEEN_NOTIFICATION_KEY, lastSeenNotificationAt);
+                    }
+                    updateNotificationBadges();
+                    return;
                 }
-            });
+
+                const newItems = notifications.filter((item) => {
+                    const created = new Date(item.createdAt || 0).getTime();
+                    const previous = new Date(previousNewest || 0).getTime();
+                    return created > previous;
+                });
+                newItems.reverse().forEach(handleNewNotification);
+                updateNotificationBadges();
+            }, (error) => console.error("Error leyendo notificaciones públicas:", error));
+        }
+
+        function startFirebaseListeners() {
+            if (firebaseListenersStarted || !window.firebaseDatabase) return;
+            firebaseListenersStarted = true;
+            loadPublicAnnouncements();
+            loadPublicNotifications();
         }
 
         function applyFilters() {
-            filteredAnnouncements = [...announcements];
-            
-            if (currentFilters.department !== 'todos') {
-                if (currentFilters.department === 'Ministerio Joven') {
-                    // Mostrar anuncios de JA y todos los clubes
-                    filteredAnnouncements = filteredAnnouncements.filter(
-                        ann => ministerioJovenDepartments.includes(ann.department)
-                    );
-                } else {
-                    // Mostrar solo el departamento seleccionado
-                    filteredAnnouncements = filteredAnnouncements.filter(
-                        ann => ann.department === currentFilters.department
-                    );
-                }
-            }
-            
-            filteredAnnouncements.sort((a, b) => {
-                switch(currentFilters.sortBy) {
-                    case 'date_asc':
-                        return new Date(a.date) - new Date(b.date);
-                    case 'date_desc':
-                        return new Date(b.date) - new Date(a.date);
-                    case 'newest':
-                        return b.id - a.id;
-                    default:
-                        return new Date(a.date) - new Date(b.date);
-                }
+            const search = filters.search.trim().toLocaleLowerCase("es");
+            filteredAnnouncements = announcements.filter((announcement) => {
+                const matchesDepartment = filters.department === "todos" || announcement.department === filters.department;
+                const haystack = `${announcement.title || ""} ${announcement.description || ""} ${announcement.author || ""} ${announcement.department || ""}`.toLocaleLowerCase("es");
+                return matchesDepartment && (!search || haystack.includes(search));
             });
-            
-            updateCounter();
-            renderAnnouncements();
+
+            filteredAnnouncements.sort((a,b) => {
+                if (filters.sort === "date_desc") return eventStartDate(b) - eventStartDate(a);
+                if (filters.sort === "newest") return new Date(b.publishedAt || b.createdAt || 0) - new Date(a.publishedAt || a.createdAt || 0);
+                return eventStartDate(a) - eventStartDate(b);
+            });
         }
 
-        function updateCounter() {
-            if (announcements.length > 0) {
-                announcementCounter.style.display = 'block';
-                
-                if (currentFilters.department === 'todos') {
-                    counterText.innerHTML = `Mostrando <strong>${filteredAnnouncements.length}</strong> anuncios`;
-                } else if (currentFilters.department === 'Ministerio Joven') {
-                    counterText.innerHTML = `Ministerio Joven: <strong>${filteredAnnouncements.length}</strong> anuncios (JA y Clubes)`;
-                } else {
-                    counterText.innerHTML = `${currentFilters.department}: <strong>${filteredAnnouncements.length}</strong> anuncios`;
-                }
-            } else {
-                announcementCounter.style.display = 'none';
-            }
+        function renderAll() {
+            renderDepartmentOptions();
+            applyFilters();
+            renderStats();
+            renderDashboardLists();
+            renderDepartments();
+            renderAnnouncements();
+            renderNotifications();
+        }
+
+        function renderStats() {
+            const departmentCount = new Set(announcements.map((item) => item.department).filter(Boolean)).size;
+            const filesCount = announcements.reduce((sum,item) => sum + (Array.isArray(item.files) ? item.files.length : 0), 0);
+            $("statAnnouncements").textContent = announcements.length;
+            $("statUpcoming").textContent = announcements.filter(isUpcoming).length;
+            $("statDepartments").textContent = departmentCount;
+            $("statFiles").textContent = filesCount;
+        }
+
+        function miniItemHTML(announcement, badgeText = "Publicado") {
+            return `<button class="mini-item" type="button" data-open-announcement="${escapeHTML(announcement.id)}"><span class="mini-icon"><i class="bi ${getDepartmentIcon(announcement.department)}"></i></span><span class="mini-copy"><strong>${escapeHTML(announcement.title)}</strong><small>${escapeHTML(announcement.department)} · ${escapeHTML(formatDate(announcement.date,true))} · ${escapeHTML(formatTime(announcement.time))}</small></span><span class="mini-badge">${escapeHTML(badgeText)}</span></button>`;
+        }
+
+        function renderDashboardLists() {
+            const recent = announcements.slice(0,4);
+            const upcoming = announcements.filter(isUpcoming).sort((a,b) => eventStartDate(a)-eventStartDate(b)).slice(0,4);
+            $("recentList").innerHTML = recent.length ? recent.map((item) => miniItemHTML(item)).join("") : `<div class="empty-mini">Aún no hay anuncios publicados.</div>`;
+            $("upcomingList").innerHTML = upcoming.length ? upcoming.map((item) => miniItemHTML(item,"Próximo")).join("") : `<div class="empty-mini">No hay próximas fechas disponibles.</div>`;
+        }
+
+        function renderDepartmentOptions() {
+            const current = $("departmentFilter").value || filters.department;
+            const departments = [...new Set(announcements.map((item) => item.department).filter(Boolean))].sort((a,b) => a.localeCompare(b,"es"));
+            $("departmentFilter").innerHTML = `<option value="todos">Todos los departamentos</option>${departments.map((name) => `<option value="${escapeHTML(name)}">${escapeHTML(name)}</option>`).join("")}`;
+            $("departmentFilter").value = departments.includes(current) || current === "todos" ? current : "todos";
+            filters.department = $("departmentFilter").value;
+        }
+
+        function renderDepartments() {
+            const counts = announcements.reduce((map,item) => {
+                if (!item.department) return map;
+                map[item.department] = (map[item.department] || 0) + 1;
+                return map;
+            }, {});
+            const departments = Object.keys(counts).sort((a,b) => a.localeCompare(b,"es"));
+            $("departmentsGrid").innerHTML = departments.length ? departments.map((department) => `<button class="department-card" type="button" data-department-card="${escapeHTML(department)}"><span class="department-icon"><i class="bi ${getDepartmentIcon(department)}"></i></span><h3>${escapeHTML(department)}</h3><strong>${counts[department]}</strong><p>${counts[department] === 1 ? "anuncio publicado" : "anuncios publicados"}</p></button>`).join("") : emptyStateHTML("bi-folder2-open","No hay departamentos disponibles","Los departamentos aparecerán cuando existan anuncios públicos.");
+        }
+
+        function emptyStateHTML(icon, title, message) {
+            return `<div class="empty-state"><div><div class="empty-state-icon"><i class="bi ${escapeHTML(icon)}"></i></div><h3>${escapeHTML(title)}</h3><p>${escapeHTML(message)}</p></div></div>`;
         }
 
         function renderAnnouncements() {
-            if (filteredAnnouncements.length === 0) {
-                let message = 'No hay anuncios para mostrar.';
-                let submessage = 'Los anuncios aparecerán aquí cuando sean publicados por los líderes.';
-                
-                if (currentFilters.department !== 'todos') {
-                    if (currentFilters.department === 'Ministerio Joven') {
-                        message = 'No hay anuncios para Ministerio Joven (JA y Clubes).';
-                    } else {
-                        message = `No hay anuncios para ${currentFilters.department}.`;
-                    }
-                }
-                
-                emptyMessage.querySelector('h3').textContent = message;
-                emptyMessage.querySelector('p').textContent = submessage;
-                emptyMessage.style.display = 'block';
-                announcementsContainer.innerHTML = '';
-                announcementsContainer.appendChild(emptyMessage);
+            $("counterLine").innerHTML = filteredAnnouncements.length
+                ? `Mostrando <strong>${filteredAnnouncements.length}</strong> de <strong>${announcements.length}</strong> anuncios públicos.`
+                : "No se encontraron anuncios con los filtros seleccionados.";
+            $("announcementsGrid").innerHTML = filteredAnnouncements.length
+                ? filteredAnnouncements.map(announcementCardHTML).join("")
+                : emptyStateHTML("bi-inbox","No hay anuncios disponibles","Prueba con otro departamento o limpia los filtros de búsqueda.");
+        }
+
+        function announcementCardHTML(announcement) {
+            const files = Array.isArray(announcement.files) ? announcement.files : [];
+            const endInfo = announcement.endDate ? ` · hasta ${formatDate(announcement.endDate,true)}` : "";
+            return `<article class="announcement-card" tabindex="0" role="button" data-open-announcement="${escapeHTML(announcement.id)}">
+                <div class="card-cover">
+                    <span class="category-pill">${escapeHTML(announcement.department || "General")}</span>
+                    ${files.length ? `<span class="attachment-pill"><i class="bi bi-paperclip"></i> ${files.length}</span>` : ""}
+                    <i class="bi ${getDepartmentIcon(announcement.department)}" aria-hidden="true"></i>
+                </div>
+                <div class="card-body">
+                    <h2 class="announcement-title">${escapeHTML(announcement.title || "Anuncio sin título")}</h2>
+                    <p class="announcement-description">${escapeHTML(announcement.description || "Sin descripción.")}</p>
+                    <div class="event-meta">
+                        <div class="meta-row"><i class="bi bi-calendar-event"></i><span>${escapeHTML(formatDate(announcement.date,true) + endInfo)}</span></div>
+                        <div class="meta-row"><i class="bi bi-clock"></i><span>${escapeHTML(formatTime(announcement.time))}${announcement.endTime ? ` – ${escapeHTML(formatTime(announcement.endTime))}` : ""}</span></div>
+                    </div>
+                </div>
+                <footer class="card-footer"><div class="author"><i class="bi bi-person-circle"></i><span>${escapeHTML(announcement.author || "Iglesia Monte Sion")}</span></div><button class="view-button" type="button">Ver detalles <i class="bi bi-chevron-right"></i></button></footer>
+            </article>`;
+        }
+
+        function getAnnouncementById(id) {
+            return announcements.find((item) => String(item.id) === String(id));
+        }
+
+        function openAnnouncementDetails(id) {
+            const announcement = getAnnouncementById(id);
+            if (!announcement) {
+                showToast("Anuncio no encontrado", "Es posible que haya sido retirado de la vista pública.", "bi-exclamation-triangle");
                 return;
             }
-            
-            emptyMessage.style.display = 'none';
-            
-            let announcementsHTML = '';
-            
-            filteredAnnouncements.forEach(announcement => {
-                const createdDate = new Date(announcement.createdAt);
-                const formattedDate = createdDate.toLocaleDateString('es-ES', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                // Usar la función formatDate para mostrar la fecha correctamente
-                const formattedEventDate = formatDate(announcement.date);
-                
-                // Asignar colores diferentes por tipo de departamento
-                let categoryColor = 'var(--azul-secundario)';
-                if (announcement.department === 'JA') {
-                    categoryColor = '#8b5cf6'; // Morado para JA
-                } else if (announcement.department === 'Aventureros') {
-                    categoryColor = '#10b981'; // Verde para Aventureros
-                } else if (announcement.department === 'Conquistadores') {
-                    categoryColor = '#f59e0b'; // Naranja para Conquistadores
-                } else if (announcement.department === 'Guías Mayores') {
-                    categoryColor = '#ef4444'; // Rojo para Guías Mayores
-                } else if (announcement.department === 'Ministerio Joven') {
-                    categoryColor = '#3b82f6'; // Azul para Ministerio Joven general
-                } else if (announcement.department === 'Ministerio Infantil') {
-                    categoryColor = '#ec4899'; // Rosa para Infantil
-                } else if (announcement.department === 'Escuela Sabática') {
-                    categoryColor = '#0ea5e9'; // Azul claro para Escuela Sabática
-                }
-                
-                // Contar archivos adjuntos
-                const fileCount = announcement.files ? announcement.files.length : 0;
-                
-                // Convertir hora a formato 12h
-                const timeDisplay = announcement.time ? convertTo12Hour(announcement.time) : 'No especificada';
-                
-                announcementsHTML += `
-                    <div class="announcement-card" onclick="openAnnouncementDetails(${announcement.id})">
-                        <div class="announcement-header">
-                            <div class="announcement-title">${announcement.title}</div>
-                            <div class="announcement-category" style="background-color: ${categoryColor}">
-                                ${announcement.department}
-                            </div>
-                        </div>
-                        
-                        ${fileCount > 0 ? `<div class="files-count">📎 ${fileCount}</div>` : ''}
-                        
-                        <div class="announcement-details">
-                            <div class="detail-item">
-                                <strong>📅 Fecha:</strong> ${formattedEventDate}
-                            </div>
-                            <div class="detail-item">
-                                <strong>🕐 Hora:</strong> ${timeDisplay}
-                            </div>
-                        </div>
-                        
-                        <div class="announcement-description">
-                            ${announcement.description}
-                            <button class="view-more">Ver más ⤴</button>
-                        </div>
-                        
-                        <div class="announcement-footer">
-                            <div class="announcement-author">
-                                👤 ${announcement.author}
-                            </div>
-                            <div class="announcement-date">
-                                📌 ${formattedDate}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            announcementsContainer.innerHTML = announcementsHTML;
+            const files = Array.isArray(announcement.files) ? announcement.files : [];
+            const filesHTML = files.length ? `<section class="files-section"><h3><i class="bi bi-paperclip"></i> Archivos adjuntos (${files.length})</h3>${files.map((file,index) => fileCardHTML(file,announcement.id,index)).join("")}</section>` : "";
+            $("detailsBody").innerHTML = `
+                <div class="details-hero"><small>${escapeHTML(announcement.department || "General")}</small><h3>${escapeHTML(announcement.title || "Anuncio")}</h3></div>
+                <div class="details-grid">
+                    <div class="detail-box"><small>Fecha de inicio</small><strong>${escapeHTML(formatDate(announcement.date))}</strong></div>
+                    <div class="detail-box"><small>Hora de inicio</small><strong>${escapeHTML(formatTime(announcement.time))}</strong></div>
+                    ${announcement.endDate ? `<div class="detail-box"><small>Fecha de fin</small><strong>${escapeHTML(formatDate(announcement.endDate))}</strong></div>` : ""}
+                    ${announcement.endTime ? `<div class="detail-box"><small>Hora de fin</small><strong>${escapeHTML(formatTime(announcement.endTime))}</strong></div>` : ""}
+                    <div class="detail-box"><small>Publicado por</small><strong>${escapeHTML(announcement.author || "Iglesia Monte Sion")}</strong></div>
+                    <div class="detail-box"><small>Fecha de publicación</small><strong>${escapeHTML(formatTimestamp(announcement.publishedAt || announcement.createdAt))}</strong></div>
+                </div>
+                <div class="description-box">${escapeHTML(announcement.description || "Sin descripción.")}</div>
+                ${filesHTML}`;
+            openModal("detailsModal");
+            const url = new URL(window.location.href);
+            url.searchParams.set("announcement", announcement.id);
+            history.replaceState(null,"",url);
         }
 
-        // Abrir detalles del anuncio
-        function openAnnouncementDetails(id) {
-            showLoadingOverlay('Cargando detalles...', 'Obteniendo información del anuncio...');
-            
-            // Buscar el anuncio
-            const announcement = announcements.find(ann => ann.id === id);
-            
-            if (announcement) {
-                hideLoadingOverlay();
-                
-                // Convertir horas a formato 12h
-                const startTime = announcement.time ? convertTo12Hour(announcement.time) : 'No especificada';
-                const endTime = announcement.endTime ? convertTo12Hour(announcement.endTime) : null;
-                
-                // Usar la función formatDate para mostrar la fecha correctamente
-                const eventDate = formatDate(announcement.date);
-                const endDateDisplay = announcement.endDate ? formatDate(announcement.endDate) : null;
-                
-                // Generar contenido para archivos
-                let filesContent = '';
-                if (announcement.files && announcement.files.length > 0) {
-                    filesContent = `
-                        <div class="details-section">
-                            <h4>Archivos Adjuntos (${announcement.files.length})</h4>
-                            ${announcement.files.map((file, index) => `
-                                <div class="file-preview-container">
-                                    <div class="detail-row">
-                                        <div class="detail-label">Archivo ${index + 1}:</div>
-                                        <div class="detail-value">
-                                            ${getFileIcon(file.type)} ${file.name}
-                                            <span style="color: var(--gris); font-size: 0.9rem;">
-                                                (${getFileTypeName(file.type)} • ${formatFileSize(file.size)})
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="file-preview">
-                                        ${generateFilePreview(file, announcement.id, index)}
-                                    </div>
-                                    <div class="preview-actions">
-                                        <button class="preview-download-btn" onclick="downloadFile(${announcement.id}, ${index})">
-                                            ⬇️ Descargar Archivo
-                                        </button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }
-                
-                // Construir contenido del modal
-                const detailsContent = `
-                    <div class="details-section">
-                        <h4>Información del Anuncio</h4>
-                        <div class="detail-row">
-                            <div class="detail-label">Título:</div>
-                            <div class="detail-value">${announcement.title}</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Departamento:</div>
-                            <div class="detail-value">${announcement.department}</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Autor:</div>
-                            <div class="detail-value">${announcement.author}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="details-section">
-                        <h4>Fecha y Hora</h4>
-                        <div class="detail-row">
-                            <div class="detail-label">Fecha de inicio:</div>
-                            <div class="detail-value">${eventDate}</div>
-                        </div>
-                        <div class="detail-row">
-                            <div class="detail-label">Hora de inicio:</div>
-                            <div class="detail-value">${startTime}</div>
-                        </div>
-                        ${endDateDisplay ? `
-                        <div class="detail-row">
-                            <div class="detail-label">Fecha de fin:</div>
-                            <div class="detail-value">${endDateDisplay}</div>
-                        </div>
-                        ` : ''}
-                        ${endTime ? `
-                        <div class="detail-row">
-                            <div class="detail-label">Hora de fin:</div>
-                            <div class="detail-value">${endTime}</div>
-                        </div>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="details-section">
-                        <h4>Descripción Completa</h4>
-                        <div class="detail-value" style="background-color: var(--azul-claro); padding: 1rem; border-radius: 8px; line-height: 1.6;">
-                            ${announcement.description.replace(/\n/g, '<br>')}
-                        </div>
-                    </div>
-                    
-                    ${filesContent}
-                `;
-                
-                detailsBody.innerHTML = detailsContent;
-                detailsModal.classList.add('active');
-            } else {
-                hideLoadingOverlay();
-                alert('No se pudo cargar la información del anuncio.');
-            }
+        function fileCardHTML(file, announcementId, index) {
+            const dataUrl = `data:${file.type || "application/octet-stream"};base64,${file.data || ""}`;
+            let preview = `<div class="no-preview"><i class="bi ${getFileIcon(file.type)}" style="font-size:2rem;"></i><p>Vista previa no disponible para este tipo de archivo.</p></div>`;
+            if (String(file.type || "").startsWith("image/")) preview = `<img class="image-preview" src="${dataUrl}" alt="${escapeHTML(file.name || "Imagen adjunta")}">`;
+            else if (String(file.type || "").startsWith("video/")) preview = `<video class="video-preview" controls preload="metadata"><source src="${dataUrl}" type="${escapeHTML(file.type)}"></video>`;
+            else if (file.type === "application/pdf") preview = `<iframe class="pdf-preview" src="${dataUrl}" title="${escapeHTML(file.name || "Documento PDF")}"></iframe>`;
+            return `<article class="file-card"><div class="file-heading"><i class="bi ${getFileIcon(file.type)}"></i><div><strong>${escapeHTML(file.name || `Archivo ${index + 1}`)}</strong><small>${escapeHTML(getFileTypeName(file.type))} · ${escapeHTML(formatFileSize(file.size))}</small></div></div><div class="file-preview">${preview}</div><button class="download-button" type="button" data-download-file="${escapeHTML(announcementId)}" data-file-index="${index}"><i class="bi bi-download"></i> Descargar archivo</button></article>`;
         }
 
-        // Generar vista previa de archivo
-        function generateFilePreview(file, announcementId, fileIndex) {
-            if (file.type.startsWith('image/')) {
-                const base64Data = `data:${file.type};base64,${file.data}`;
-                return `<img src="${base64Data}" class="image-preview" alt="${file.name}">`;
-            } else if (file.type.startsWith('video/')) {
-                const base64Data = `data:${file.type};base64,${file.data}`;
-                return `<video controls class="video-preview">
-                    <source src="${base64Data}" type="${file.type}">
-                    Tu navegador no soporta la reproducción de video.
-                </video>`;
-            } else if (file.type === 'application/pdf') {
-                const base64Data = `data:${file.type};base64,${file.data}`;
-                return `<iframe src="${base64Data}" class="pdf-preview" title="${file.name}"></iframe>`;
-            } else {
-                return `
-                    <div class="no-preview">
-                        <div class="preview-icon">${getFileIcon(file.type)}</div>
-                        <p>Vista previa no disponible para este tipo de archivo</p>
-                        <p style="font-size: 0.8rem; color: var(--gris); margin-top: 0.5rem;">
-                            ${getFileTypeName(file.type)} • ${formatFileSize(file.size)}
-                        </p>
-                    </div>
-                `;
-            }
-        }
-
-        // Descargar archivo
         function downloadFile(announcementId, fileIndex) {
-            const announcement = announcements.find(ann => ann.id === announcementId);
-            if (announcement && announcement.files && announcement.files[fileIndex]) {
-                const file = announcement.files[fileIndex];
-                try {
-                    const byteCharacters = atob(file.data);
-                    const byteNumbers = new Array(byteCharacters.length);
-                    for (let i = 0; i < byteCharacters.length; i++) {
-                        byteNumbers[i] = byteCharacters.charCodeAt(i);
-                    }
-                    const byteArray = new Uint8Array(byteNumbers);
-                    const blob = new Blob([byteArray], { type: file.type });
-                    
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = file.name;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                } catch (error) {
-                    console.error("Error al descargar archivo:", error);
-                    alert('Error al descargar el archivo. Intenta nuevamente.');
-                }
+            const announcement = getAnnouncementById(announcementId);
+            const file = announcement?.files?.[Number(fileIndex)];
+            if (!file?.data) {
+                showToast("Archivo no disponible", "No fue posible encontrar los datos del archivo.", "bi-file-earmark-x");
+                return;
+            }
+            try {
+                const byteCharacters = atob(file.data);
+                const byteNumbers = new Uint8Array(byteCharacters.length);
+                for (let index = 0; index < byteCharacters.length; index += 1) byteNumbers[index] = byteCharacters.charCodeAt(index);
+                const blob = new Blob([byteNumbers], { type: file.type || "application/octet-stream" });
+                const url = URL.createObjectURL(blob);
+                const anchor = document.createElement("a");
+                anchor.href = url;
+                anchor.download = file.name || "archivo-adjunto";
+                document.body.appendChild(anchor);
+                anchor.click();
+                anchor.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                showToast("Descarga iniciada", file.name || "El archivo se está descargando.", "bi-download");
+            } catch (error) {
+                console.error("Error descargando archivo:", error);
+                showToast("Error de descarga", "No fue posible descargar el archivo.", "bi-exclamation-triangle");
             }
         }
 
-        // Cerrar modal de detalles
-        function closeDetailsModal() {
-            detailsModal.classList.remove('active');
+        function notificationTimestamp(item) { return new Date(item.createdAt || 0).getTime(); }
+        function unreadNotifications() {
+            const seen = new Date(lastSeenNotificationAt || 0).getTime();
+            return notifications.filter((item) => notificationTimestamp(item) > seen);
         }
 
-        document.addEventListener('DOMContentLoaded', initApp);
-        
-        // Hacer funciones disponibles globalmente
-        window.openAnnouncementDetails = openAnnouncementDetails;
-        window.downloadFile = downloadFile;
+        function updateNotificationBadges() {
+            const count = unreadNotifications().length;
+            [$("notificationBadge"), $("mobileNotificationBadge")].forEach((badge) => {
+                badge.textContent = count > 99 ? "99+" : String(count);
+                badge.classList.toggle("active", count > 0);
+            });
+        }
+
+        function renderNotifications() {
+            if (!$("notificationList")) return;
+            $("notificationList").innerHTML = notifications.length ? notifications.map((item) => `<button class="notification-item" type="button" data-notification-announcement="${escapeHTML(item.announcementId)}"><span class="notification-item-icon"><i class="bi bi-megaphone"></i></span><span><strong>${escapeHTML(item.title || "Nuevo anuncio")}</strong><p>${escapeHTML(item.message || `Nuevo anuncio de ${item.department || "la iglesia"}.`)}</p><time>${escapeHTML(formatTimestamp(item.createdAt))}</time></span></button>`).join("") : emptyStateHTML("bi-bell-slash","No hay notificaciones","Los nuevos anuncios publicados aparecerán aquí.");
+            updateNotificationBadges();
+        }
+
+        function markNotificationsSeen() {
+            if (notifications[0]?.createdAt) {
+                lastSeenNotificationAt = notifications[0].createdAt;
+                localStorage.setItem(LAST_SEEN_NOTIFICATION_KEY, lastSeenNotificationAt);
+                updateNotificationBadges();
+            }
+        }
+
+        async function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                showToast("No compatible", "Este navegador no admite notificaciones del sistema.", "bi-bell-slash");
+                return false;
+            }
+            if (Notification.permission === "granted") {
+                showToast("Notificaciones activas", "Recibirás un aviso cuando aparezca un anuncio nuevo mientras la aplicación esté abierta.", "bi-bell-fill");
+                return true;
+            }
+            if (Notification.permission === "denied") {
+                showToast("Permiso bloqueado", "Activa las notificaciones desde la configuración del navegador.", "bi-shield-exclamation");
+                return false;
+            }
+            const permission = await Notification.requestPermission();
+            if (permission === "granted") {
+                showToast("Notificaciones activadas", "Los nuevos anuncios podrán mostrar un aviso del navegador.", "bi-bell-fill");
+                return true;
+            }
+            showToast("Notificaciones no activadas", "Puedes intentarlo de nuevo desde el menú de la aplicación.", "bi-bell-slash");
+            return false;
+        }
+
+        async function handleNewNotification(item) {
+            showToast(item.title || "Nuevo anuncio", item.message || "Se publicó un nuevo anuncio.", "bi-megaphone");
+            if (!("Notification" in window) || Notification.permission !== "granted") return;
+            try {
+                const registration = await navigator.serviceWorker?.ready;
+                if (registration?.showNotification) {
+                    await registration.showNotification(item.title || "Nuevo anuncio", {
+                        body: item.message || `Nuevo anuncio de ${item.department || "la iglesia"}`,
+                        icon: "./icon/icon-192.png",
+                        badge: "./icon/icon-192.png",
+                        tag: `announcement-${item.announcementId}`,
+                        renotify: false,
+                        data: { announcementId: item.announcementId }
+                    });
+                } else {
+                    const notification = new Notification(item.title || "Nuevo anuncio", { body: item.message || "Se publicó un nuevo anuncio.", icon: "./icon/icon-192.png", tag: `announcement-${item.announcementId}` });
+                    notification.onclick = () => { window.focus(); openAnnouncementDetails(item.announcementId); notification.close(); };
+                }
+            } catch (error) {
+                console.error("No fue posible mostrar la notificación:", error);
+            }
+        }
+
+        function openAnnouncementFromUrl() {
+            const id = new URLSearchParams(location.search).get("announcement");
+            if (id && getAnnouncementById(id) && !$("detailsModal").classList.contains("active")) openAnnouncementDetails(id);
+        }
+
+        function clearAnnouncementParam() {
+            const url = new URL(location.href);
+            url.searchParams.delete("announcement");
+            history.replaceState(null,"",url);
+        }
+
+        function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+        function isStandalone() { return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true; }
+
+        async function triggerInstall() {
+            if (isStandalone()) {
+                showToast("Aplicación instalada", "Ya estás usando la versión instalada.", "bi-check-circle");
+                closeModal("installModal");
+                return;
+            }
+            if (deferredInstallPrompt) {
+                deferredInstallPrompt.prompt();
+                const choice = await deferredInstallPrompt.userChoice;
+                deferredInstallPrompt = null;
+                closeModal("installModal");
+                if (choice.outcome === "accepted") showToast("Instalación iniciada", "La aplicación se agregará a tu dispositivo.", "bi-phone");
+                return;
+            }
+            openModal("installModal");
+            $("installHelpText").textContent = isIOS()
+                ? "En Safari toca el botón Compartir y selecciona “Agregar a pantalla de inicio”."
+                : "Abre el menú de Chrome y selecciona “Instalar aplicación” o “Agregar a pantalla principal”.";
+        }
+
+        function openInstallFlow() {
+            openModal("installModal");
+            $("installHelpText").textContent = isStandalone()
+                ? "La aplicación ya se encuentra instalada en este dispositivo."
+                : isIOS()
+                    ? "En Safari toca el botón Compartir y selecciona “Agregar a pantalla de inicio”."
+                    : deferredInstallPrompt
+                        ? "Presiona el botón para instalar esta aplicación con su icono en tu dispositivo."
+                        : "Abre el menú de Chrome y selecciona “Instalar aplicación” o “Agregar a pantalla principal”.";
+            $("installModalAction").hidden = isStandalone();
+        }
+
+        function setupEvents() {
+            document.addEventListener("click", (event) => {
+                const navButton = event.target.closest("[data-nav]");
+                if (navButton) showView(navButton.dataset.nav);
+
+                const announcementElement = event.target.closest("[data-open-announcement]");
+                if (announcementElement) openAnnouncementDetails(announcementElement.dataset.openAnnouncement);
+
+                const departmentElement = event.target.closest("[data-department-card]");
+                if (departmentElement) {
+                    filters.department = departmentElement.dataset.departmentCard;
+                    $("departmentFilter").value = filters.department;
+                    applyFilters();
+                    renderAnnouncements();
+                    showView("announcements");
+                }
+
+                const notificationElement = event.target.closest("[data-notification-announcement]");
+                if (notificationElement) openAnnouncementDetails(notificationElement.dataset.notificationAnnouncement);
+
+                const downloadButton = event.target.closest("[data-download-file]");
+                if (downloadButton) {
+                    event.stopPropagation();
+                    downloadFile(downloadButton.dataset.downloadFile, downloadButton.dataset.fileIndex);
+                }
+
+                const closeButton = event.target.closest("[data-close-modal]");
+                if (closeButton) {
+                    closeModal(closeButton.dataset.closeModal);
+                    if (closeButton.dataset.closeModal === "detailsModal") clearAnnouncementParam();
+                }
+            });
+
+            document.querySelectorAll(".modal").forEach((modal) => modal.addEventListener("click", (event) => {
+                if (event.target === modal) {
+                    closeModal(modal.id);
+                    if (modal.id === "detailsModal") clearAnnouncementParam();
+                }
+            }));
+
+            document.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") {
+                    document.querySelectorAll(".modal.active").forEach((modal) => closeModal(modal.id));
+                    clearAnnouncementParam();
+                }
+                if ((event.key === "Enter" || event.key === " ") && event.target.matches(".announcement-card")) {
+                    event.preventDefault();
+                    openAnnouncementDetails(event.target.dataset.openAnnouncement);
+                }
+            });
+
+            $("searchInput").addEventListener("input", (event) => { filters.search = event.target.value; applyFilters(); renderAnnouncements(); });
+            $("departmentFilter").addEventListener("change", (event) => { filters.department = event.target.value; applyFilters(); renderAnnouncements(); });
+            $("sortFilter").addEventListener("change", (event) => { filters.sort = event.target.value; applyFilters(); renderAnnouncements(); });
+            $("clearFiltersBtn").addEventListener("click", () => {
+                filters.search = ""; filters.department = "todos"; filters.sort = "date_asc";
+                $("searchInput").value = ""; $("departmentFilter").value = "todos"; $("sortFilter").value = "date_asc";
+                applyFilters(); renderAnnouncements();
+            });
+            $("refreshBtn").addEventListener("click", () => {
+                showLoading("Actualizando anuncios", "Consultando la información más reciente...");
+                setTimeout(hideLoading, 800);
+                showToast("Datos actualizados", "La aplicación se mantiene sincronizada en tiempo real.", "bi-arrow-clockwise");
+            });
+
+            [$("enableNotificationsSidebar"), $("enableNotificationsHero"), $("enableNotificationsView")].forEach((button) => button.addEventListener("click", requestNotificationPermission));
+            $("markReadBtn").addEventListener("click", () => { markNotificationsSeen(); showToast("Avisos actualizados", "Todas las notificaciones fueron marcadas como vistas.", "bi-check2-all"); });
+            $("notificationHeaderBtn").addEventListener("click", () => showView("notifications"));
+            $("installBtn").addEventListener("click", openInstallFlow);
+            $("installModalAction").addEventListener("click", triggerInstall);
+
+            window.addEventListener("beforeinstallprompt", (event) => {
+                event.preventDefault();
+                deferredInstallPrompt = event;
+                $("installBtn").hidden = false;
+            });
+            window.addEventListener("appinstalled", () => {
+                deferredInstallPrompt = null;
+                showToast("Aplicación instalada", "Anuncios Públicos ya está disponible en tu dispositivo.", "bi-check-circle");
+            });
+        }
+
+        async function registerServiceWorker() {
+            if (!("serviceWorker" in navigator)) return;
+            try { await navigator.serviceWorker.register("./service-worker.js"); }
+            catch (error) { console.error("No se pudo registrar el service worker:", error); }
+        }
+
+        function initApp() {
+            showLoading("Cargando anuncios", "Conectando con la base de datos...");
+            setupEvents();
+            registerServiceWorker();
+            if (window.firebaseDatabase) startFirebaseListeners();
+            else window.addEventListener("firebase-ready", startFirebaseListeners, { once: true });
+            setTimeout(() => {
+                if (!firebaseListenersStarted) {
+                    hideLoading();
+                    setConnectionStatus(false,"Firebase no disponible");
+                    showToast("No fue posible conectar", "Revisa la conexión a internet y la configuración de Firebase.", "bi-wifi-off");
+                }
+            }, 8000);
+        }
+
+        document.addEventListener("DOMContentLoaded", initApp);
     </script>
 </body>
 </html>

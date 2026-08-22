@@ -1230,7 +1230,7 @@
             // Chrome no permite que una web fuerce el instalador si no ha entregado beforeinstallprompt.
             // En ese caso mostramos instrucciones claras en vez de dejar el botón sin respuesta.
             setInstallInstructions();
-            showToast("Instalación manual", isAndroid() ? "Abre el menú ⋮ de Chrome y selecciona “Instalar aplicación”." : "Usa el menú de tu navegador para instalar la aplicación.", "bi-download");
+            showToast("Instalación manual", isAndroid() ? "Abre el menú ⋮ de esta página de <strong>Anuncios Públicos</strong> y selecciona “Instalar aplicación”." : "Usa el menú de tu navegador para instalar la aplicación.", "bi-download");
         }
 
         function openInstallFlow() {

@@ -1,4 +1,4 @@
-const CACHE_NAME = "anuncios-publicos-monte-sion-v4-pwa";
+const CACHE_NAME = "anuncios-publicos-monte-sion-v5-public-pwa";
 const APP_SHELL = [
   "./",
   "./index.html",

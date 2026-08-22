@@ -1,9 +1,9 @@
-const CACHE_NAME = "anuncios-publicos-monte-sion-v2";
+const CACHE_NAME = "anuncios-publicos-monte-sion-v3-layout";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
-  "./assets/bootstrap-icons.min.css",
+  "",
   "./icon/logo.png",
   "./icon/icon-192.png",
   "./icon/icon-512.png",

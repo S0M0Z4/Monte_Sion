@@ -384,8 +384,7 @@
             }
             .mobile-nav-button i { font-size: 1.15rem; }
             .mobile-nav-button.active { color: var(--azul-secundario); background: #edf5ff; }
-            .mobile-nav-button.primary-mobile { width: 54px; height: 54px; min-height: 54px; margin: -25px auto 0; color: white; background: var(--azul-secundario); border-radius: 50%; box-shadow: 0 10px 25px rgba(59,130,246,.35); }
-            .mobile-nav-badge { position: absolute; top: 2px; right: 16%; min-width: 17px; height: 17px; padding: 0 4px; display: none; place-items: center; border-radius: 999px; color: white; background: var(--rojo); font-size: .58rem; font-weight: 800; }
+            .mobile-nav-badge { position: absolute; top: 2px; right: 8%; min-width: 17px; height: 17px; padding: 0 4px; display: none; place-items: center; border-radius: 999px; color: white; background: var(--rojo); font-size: .58rem; font-weight: 800; }
             .mobile-nav-badge.active { display: grid; }
         }
         @media (max-width: 620px) {
@@ -463,7 +462,7 @@
                     <i class="bi bi-bell" aria-hidden="true"></i>
                     <span id="notificationBadge" class="notification-badge">0</span>
                 </button>
-                <button id="installBtn" class="install-btn" type="button" title="Instalar aplicación">
+                <button id="installBtn" class="install-btn" type="button" title="Instalar aplicación" hidden>
                     <i class="bi bi-download" aria-hidden="true"></i>
                     <span class="button-label">Instalar</span>
                 </button>
@@ -511,7 +510,7 @@
                             <cite>Mateo 18:20</cite>
                             <div class="hero-actions">
                                 <button class="hero-button primary" type="button" data-nav="announcements"><i class="bi bi-megaphone"></i> Ver anuncios</button>
-                                <button class="hero-button secondary" type="button" id="enableNotificationsHero"><i class="bi bi-bell"></i> Activar notificaciones</button>
+                                <button class="hero-button secondary" type="button" id="enableNotificationsHero"><i class="bi bi-bell"></i> Activar avisos</button>
                             </div>
                         </div>
                         <div class="hero-mark"><img src="./icon/logo.png" alt="Icono de la aplicación pública"></div>
@@ -564,7 +563,7 @@
                         <div class="section-header"><h2><i class="bi bi-bell"></i> Centro de avisos</h2></div>
                         <div class="modal-body">
                             <div class="notification-actions">
-                                <button id="enableNotificationsView" class="primary-action" type="button"><i class="bi bi-bell-fill"></i> Activar notificaciones</button>
+                                <button id="enableNotificationsView" class="primary-action" type="button"><i class="bi bi-bell-fill"></i> Activar avisos</button>
                                 <button id="markReadBtn" class="secondary-action" type="button"><i class="bi bi-check2-all"></i> Marcar como vistas</button>
                             </div>
                             <div id="notificationList" class="notification-list"></div>
@@ -578,9 +577,9 @@
     <nav class="mobile-bottom-nav" aria-label="Navegación móvil">
         <button class="mobile-nav-button active" type="button" data-nav="home"><i class="bi bi-house-door"></i><span>Inicio</span></button>
         <button class="mobile-nav-button" type="button" data-nav="announcements"><i class="bi bi-megaphone"></i><span>Anuncios</span></button>
-        <button class="mobile-nav-button primary-mobile" type="button" data-nav="notifications" aria-label="Notificaciones"><i class="bi bi-bell"></i><span id="mobileNotificationBadge" class="mobile-nav-badge">0</span></button>
         <button class="mobile-nav-button" type="button" data-nav="departments"><i class="bi bi-folder"></i><span>Departamentos</span></button>
-        <button class="mobile-nav-button" type="button" data-nav="install"><i class="bi bi-phone"></i><span>Instalar</span></button>
+        <button class="mobile-nav-button notification-nav" type="button" data-nav="notifications" aria-label="Notificaciones"><i class="bi bi-bell"></i><span>Notificaciones</span><span id="mobileNotificationBadge" class="mobile-nav-badge">0</span></button>
+        <button id="mobileInstallBtn" class="mobile-nav-button" type="button" data-nav="install" aria-label="Instalar aplicación"><i class="bi bi-download"></i><span>Instalar</span></button>
     </nav>
 
     <div id="detailsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="detailsModalTitle">
@@ -1059,7 +1058,7 @@
                 return false;
             }
             if (Notification.permission === "granted") {
-                showToast("Notificaciones activas", "Recibirás un aviso cuando aparezca un anuncio nuevo mientras la aplicación esté abierta.", "bi-bell-fill");
+                showToast("Notificaciones activas", "Recibirás avisos del sistema cuando se detecten nuevos anuncios.", "bi-bell-fill");
                 return true;
             }
             if (Notification.permission === "denied") {
@@ -1068,7 +1067,7 @@
             }
             const permission = await Notification.requestPermission();
             if (permission === "granted") {
-                showToast("Notificaciones activadas", "Los nuevos anuncios podrán mostrar un aviso del navegador.", "bi-bell-fill");
+                showToast("Notificaciones activadas", "El navegador ya tiene permiso para mostrar avisos de nuevos anuncios.", "bi-bell-fill");
                 return true;
             }
             showToast("Notificaciones no activadas", "Puedes intentarlo de nuevo desde el menú de la aplicación.", "bi-bell-slash");
@@ -1086,7 +1085,9 @@
                         icon: "./icon/icon-192.png",
                         badge: "./icon/icon-192.png",
                         tag: `announcement-${item.announcementId}`,
-                        renotify: false,
+                        renotify: true,
+                        requireInteraction: true,
+                        vibrate: [200, 100, 200],
                         data: { announcementId: item.announcementId }
                     });
                 } else {
@@ -1110,7 +1111,12 @@
         }
 
         function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
-        function isStandalone() { return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true; }
+        function isStandalone() { return window.matchMedia("(display-mode: standalone)").matches || window.matchMedia("(display-mode: fullscreen)").matches || window.matchMedia("(display-mode: minimal-ui)").matches || window.navigator.standalone === true; }
+        function syncInstallButtons() {
+            const installed = isStandalone();
+            $("installBtn").hidden = installed;
+            $("mobileInstallBtn").hidden = installed;
+        }
 
         async function triggerInstall() {
             if (isStandalone()) {
@@ -1213,15 +1219,21 @@
             $("markReadBtn").addEventListener("click", () => { markNotificationsSeen(); showToast("Avisos actualizados", "Todas las notificaciones fueron marcadas como vistas.", "bi-check2-all"); });
             $("notificationHeaderBtn").addEventListener("click", () => showView("notifications"));
             $("installBtn").addEventListener("click", openInstallFlow);
+            $("mobileInstallBtn").addEventListener("click", openInstallFlow);
             $("installModalAction").addEventListener("click", triggerInstall);
 
             window.addEventListener("beforeinstallprompt", (event) => {
                 event.preventDefault();
                 deferredInstallPrompt = event;
-                $("installBtn").hidden = false;
+                if (!isStandalone()) {
+                    $("installBtn").hidden = false;
+                    $("mobileInstallBtn").hidden = false;
+                }
             });
             window.addEventListener("appinstalled", () => {
                 deferredInstallPrompt = null;
+                $("installBtn").hidden = true;
+                $("mobileInstallBtn").hidden = true;
                 showToast("Aplicación instalada", "Anuncios Públicos ya está disponible en tu dispositivo.", "bi-check-circle");
             });
         }
@@ -1235,6 +1247,8 @@
         function initApp() {
             showLoading("Cargando anuncios", "Conectando con la base de datos...");
             setupEvents();
+            syncInstallButtons();
+            window.matchMedia("(display-mode: standalone)").addEventListener?.("change", syncInstallButtons);
             registerServiceWorker();
             if (window.firebaseDatabase) startFirebaseListeners();
             else window.addEventListener("firebase-ready", startFirebaseListeners, { once: true });

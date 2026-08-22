@@ -83,8 +83,8 @@
         }
         .brand { display: inline-flex; align-items: center; gap: 11px; color: inherit; text-decoration: none; min-width: 0; }
         .brand-logo {
-            width: 52px; height: 52px; border-radius: 14px; object-fit: contain; display: block; flex: 0 0 52px;
-            background: #0d6efd; padding: 2px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+            width: 52px; height: 52px; border-radius: 12px; object-fit: contain; display: block; flex: 0 0 52px;
+            background: transparent; padding: 0; box-shadow: none;
         }
         .brand-copy { min-width: 0; display: grid; line-height: 1.13; }
         .brand-copy strong { font-size: 1.05rem; white-space: nowrap; }
@@ -425,7 +425,17 @@
             .stat-icon { margin-top: 9px; }
             .departments-grid { grid-template-columns: 1fr 1fr; }
         }
-    </style>
+    
+        /* Iconos limpios: sin fondos ni cuadros decorativos. */
+        .stat-icon, .mini-icon, .department-icon, .option-icon {
+            background: transparent !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+        .brand-logo { background: transparent !important; box-shadow: none !important; padding: 0 !important; }
+        .sidebar-link i, .header-button i, .mobile-nav-button i, .hero-button i, .link-button i,
+        .file-icon, .file-upload-icon, .input-with-icon > i { background: transparent !important; }
+</style>
 
     <!-- Firebase SDK 12.7.0: misma configuración del Gestor de Anuncios. -->
     <script type="module">
@@ -992,7 +1002,7 @@
         }
 
         function fileCardHTML(file, announcementId, index) {
-            const dataUrl = `data:${file.type || "application/octet-stream"};base64,${file.data || ""}`;
+            const dataUrl = getFileDataUrl(file) || "";
             let preview = `<div class="no-preview"><i class="bi ${getFileIcon(file.type)}" style="font-size:2rem;"></i><p>Vista previa no disponible para este tipo de archivo.</p></div>`;
             if (String(file.type || "").startsWith("image/")) preview = `<img class="image-preview" src="${dataUrl}" alt="${escapeHTML(file.name || "Imagen adjunta")}">`;
             else if (String(file.type || "").startsWith("video/")) preview = `<video class="video-preview" controls preload="metadata"><source src="${dataUrl}" type="${escapeHTML(file.type)}"></video>`;
@@ -1000,30 +1010,64 @@
             return `<article class="file-card"><div class="file-heading"><i class="bi ${getFileIcon(file.type)}"></i><div><strong>${escapeHTML(file.name || `Archivo ${index + 1}`)}</strong><small>${escapeHTML(getFileTypeName(file.type))} · ${escapeHTML(formatFileSize(file.size))}</small></div></div><div class="file-preview">${preview}</div><button class="download-button" type="button" data-download-file="${escapeHTML(announcementId)}" data-file-index="${index}"><i class="bi bi-download"></i> Descargar archivo</button></article>`;
         }
 
-        function downloadFile(announcementId, fileIndex) {
+        function getFileDataUrl(file) {
+            if (!file?.data) return null;
+            const raw = String(file.data);
+            if (raw.startsWith("data:")) return raw;
+            return `data:${file.type || "application/octet-stream"};base64,${raw.replace(/\s/g, "")}`;
+        }
+
+        async function downloadFile(announcementId, fileIndex) {
             const announcement = getAnnouncementById(announcementId);
             const file = announcement?.files?.[Number(fileIndex)];
-            if (!file?.data) {
+            const dataUrl = getFileDataUrl(file);
+            if (!dataUrl) {
                 showToast("Archivo no disponible", "No fue posible encontrar los datos del archivo.", "bi-file-earmark-x");
                 return;
             }
+
+            const fileName = file.name || "archivo-adjunto";
+            const mimeType = file.type || "application/octet-stream";
+
             try {
-                const byteCharacters = atob(file.data);
-                const byteNumbers = new Uint8Array(byteCharacters.length);
-                for (let index = 0; index < byteCharacters.length; index += 1) byteNumbers[index] = byteCharacters.charCodeAt(index);
-                const blob = new Blob([byteNumbers], { type: file.type || "application/octet-stream" });
-                const url = URL.createObjectURL(blob);
+                // Los archivos del Gestor pueden venir como Base64 puro o como Data URL completa.
+                // fetch(dataUrl) funciona mejor en Chrome móvil que intentar usar atob() directamente.
+                const response = await fetch(dataUrl);
+                if (!response.ok) throw new Error(`No se pudo preparar el archivo (${response.status})`);
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(new Blob([blob], { type: mimeType }));
+
                 const anchor = document.createElement("a");
-                anchor.href = url;
-                anchor.download = file.name || "archivo-adjunto";
+                anchor.href = blobUrl;
+                anchor.download = fileName;
+                anchor.rel = "noopener";
+                anchor.style.display = "none";
                 document.body.appendChild(anchor);
                 anchor.click();
                 anchor.remove();
-                setTimeout(() => URL.revokeObjectURL(url), 1000);
-                showToast("Descarga iniciada", file.name || "El archivo se está descargando.", "bi-download");
+
+                // Algunos navegadores móviles necesitan un poco más de tiempo antes de liberar el Blob.
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+                showToast("Descarga iniciada", fileName, "bi-download");
             } catch (error) {
                 console.error("Error descargando archivo:", error);
-                showToast("Error de descarga", "No fue posible descargar el archivo.", "bi-exclamation-triangle");
+
+                // Fallback para Chrome/Android cuando el navegador bloquea la descarga programática.
+                try {
+                    const fallback = document.createElement("a");
+                    fallback.href = dataUrl;
+                    fallback.download = fileName;
+                    fallback.target = "_blank";
+                    fallback.rel = "noopener";
+                    fallback.style.display = "none";
+                    document.body.appendChild(fallback);
+                    fallback.click();
+                    fallback.remove();
+                    showToast("Abriendo archivo", "Si Chrome no lo descarga automáticamente, usa la opción de descarga del visor.", "bi-box-arrow-up-right");
+                } catch (fallbackError) {
+                    console.error("Fallback de descarga falló:", fallbackError);
+                    showToast("Error de descarga", "No fue posible descargar el archivo en este navegador.", "bi-exclamation-triangle");
+                }
             }
         }
 
@@ -1114,12 +1158,49 @@
         }
 
         function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
-        function isStandalone() { return window.matchMedia("(display-mode: standalone)").matches || window.matchMedia("(display-mode: fullscreen)").matches || window.matchMedia("(display-mode: minimal-ui)").matches || window.navigator.standalone === true; }
+        function isAndroid() { return /android/i.test(navigator.userAgent); }
+        function isStandalone() {
+            return window.matchMedia("(display-mode: standalone)").matches ||
+                   window.matchMedia("(display-mode: fullscreen)").matches ||
+                   window.matchMedia("(display-mode: minimal-ui)").matches ||
+                   window.navigator.standalone === true;
+        }
+
         function syncInstallButtons() {
             const installed = isStandalone() || localStorage.getItem("publicPwaInstalled") === "true";
-            $("installBtn").hidden = installed;
-            $("mobileInstallBtn").hidden = installed;
+            const desktopButton = $("installBtn");
+            const mobileButton = $("mobileInstallBtn");
+            if (desktopButton) desktopButton.hidden = installed;
+            if (mobileButton) mobileButton.hidden = installed;
             document.querySelector(".mobile-bottom-nav")?.classList.toggle("install-hidden", installed);
+        }
+
+        function setInstallInstructions() {
+            const text = $("installHelpText");
+            const action = $("installModalAction");
+            if (!text || !action) return;
+            action.hidden = isStandalone();
+            if (isStandalone()) {
+                text.textContent = "La aplicación ya está instalada y estás usando su versión instalada.";
+                return;
+            }
+            if (deferredInstallPrompt) {
+                text.textContent = "Presiona “Instalar ahora” para agregar Anuncios Públicos a tu teléfono con su icono.";
+                action.innerHTML = '<i class="bi bi-download"></i> Instalar ahora';
+                return;
+            }
+            if (isIOS()) {
+                text.textContent = "En Safari toca Compartir y después “Agregar a pantalla de inicio”.";
+                action.innerHTML = '<i class="bi bi-share"></i> Ver instrucciones';
+                return;
+            }
+            if (isAndroid()) {
+                text.textContent = "Si Chrome no muestra la instalación automática, abre el menú ⋮ de Chrome y selecciona “Instalar aplicación” o “Agregar a pantalla principal”.";
+                action.innerHTML = '<i class="bi bi-google"></i> Abrir instrucciones';
+                return;
+            }
+            text.textContent = "Usa el menú de tu navegador y selecciona “Instalar aplicación” o “Agregar a pantalla de inicio”.";
+            action.innerHTML = '<i class="bi bi-download"></i> Ver instrucciones';
         }
 
         async function triggerInstall() {
@@ -1129,29 +1210,37 @@
                 return;
             }
             if (deferredInstallPrompt) {
-                deferredInstallPrompt.prompt();
-                const choice = await deferredInstallPrompt.userChoice;
-                deferredInstallPrompt = null;
-                closeModal("installModal");
-                if (choice.outcome === "accepted") showToast("Instalación iniciada", "La aplicación se agregará a tu dispositivo.", "bi-phone");
+                try {
+                    deferredInstallPrompt.prompt();
+                    const choice = await deferredInstallPrompt.userChoice;
+                    if (choice.outcome === "accepted") {
+                        localStorage.setItem("publicPwaInstallPending", "true");
+                        showToast("Instalación iniciada", "Confirma la instalación en Chrome.", "bi-phone");
+                    } else {
+                        showToast("Instalación cancelada", "Puedes intentarlo nuevamente cuando quieras.", "bi-info-circle");
+                    }
+                } catch (error) {
+                    console.error("Error al abrir el instalador PWA:", error);
+                    setInstallInstructions();
+                } finally {
+                    deferredInstallPrompt = null;
+                }
                 return;
             }
-            openModal("installModal");
-            $("installHelpText").textContent = isIOS()
-                ? "En Safari toca el botón Compartir y selecciona “Agregar a pantalla de inicio”."
-                : "Abre el menú de Chrome y selecciona “Instalar aplicación” o “Agregar a pantalla principal”.";
+            // Chrome no permite que una web fuerce el instalador si no ha entregado beforeinstallprompt.
+            // En ese caso mostramos instrucciones claras en vez de dejar el botón sin respuesta.
+            setInstallInstructions();
+            showToast("Instalación manual", isAndroid() ? "Abre el menú ⋮ de Chrome y selecciona “Instalar aplicación”." : "Usa el menú de tu navegador para instalar la aplicación.", "bi-download");
         }
 
         function openInstallFlow() {
+            if (isStandalone()) {
+                openModal("installModal");
+                setInstallInstructions();
+                return;
+            }
             openModal("installModal");
-            $("installHelpText").textContent = isStandalone()
-                ? "La aplicación ya se encuentra instalada en este dispositivo."
-                : isIOS()
-                    ? "En Safari toca el botón Compartir y selecciona “Agregar a pantalla de inicio”."
-                    : deferredInstallPrompt
-                        ? "Presiona el botón para instalar esta aplicación con su icono en tu dispositivo."
-                        : "Abre el menú de Chrome y selecciona “Instalar aplicación” o “Agregar a pantalla principal”.";
-            $("installModalAction").hidden = isStandalone();
+            setInstallInstructions();
         }
 
         function setupEvents() {
@@ -1229,10 +1318,15 @@
             window.addEventListener("beforeinstallprompt", (event) => {
                 event.preventDefault();
                 deferredInstallPrompt = event;
-                if (!isStandalone()) syncInstallButtons();
+                localStorage.removeItem("publicPwaInstallPending");
+                if (!isStandalone()) {
+                    syncInstallButtons();
+                    setInstallInstructions();
+                }
             });
             window.addEventListener("appinstalled", () => {
                 deferredInstallPrompt = null;
+                localStorage.removeItem("publicPwaInstallPending");
                 localStorage.setItem("publicPwaInstalled", "true");
                 syncInstallButtons();
                 showToast("Aplicación instalada", "Anuncios Públicos ya está disponible en tu dispositivo.", "bi-check-circle");

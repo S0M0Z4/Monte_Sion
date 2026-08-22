@@ -1,32 +1,22 @@
 {
+  "id": "./",
   "name": "Anuncios Públicos - Iglesia Monte Sion",
   "short_name": "Anuncios Iglesia",
   "description": "Aplicación pública de anuncios y actividades de la Iglesia Monte Sion.",
-  "id": "./",
-  "start_url": "./",
+  "lang": "es-MX",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait-primary",
   "background_color": "#f4f7fc",
   "theme_color": "#1e3a8a",
-  "lang": "es-MX",
-  "categories": [
-    "community",
-    "lifestyle",
-    "news"
-  ],
+  "prefer_related_applications": false,
+  "categories": ["community", "lifestyle", "news"],
   "icons": [
-    {
-      "src": "./icon/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icon/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    {"src":"./icon/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"./icon/icon-192.png","sizes":"192x192","type":"image/png","purpose":"maskable"},
+    {"src":"./icon/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"./icon/icon-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
   ]
 }

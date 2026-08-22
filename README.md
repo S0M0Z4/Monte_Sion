@@ -42,3 +42,10 @@ Bootstrap Icons se carga desde CDN.
 
 ## Notificaciones
 La aplicación escucha las notificaciones públicas en tiempo real. Para recibir push con la PWA completamente cerrada todavía se requiere configurar Firebase Cloud Messaging (FCM) y su clave VAPID/servicio de envío.
+
+
+## Instalación PWA
+
+En Chrome Android, la instalación automática depende de que Chrome entregue `beforeinstallprompt`. Si no aparece, el botón **Instalar** muestra las instrucciones para usar el menú de Chrome. La web no puede forzar ese diálogo desde JavaScript.
+
+Después de actualizar una versión publicada en GitHub Pages, si el teléfono conserva la versión anterior, abre la página en Chrome, entra a Información del sitio > Configuración del sitio > Almacenamiento y borra los datos del sitio, o desinstala la PWA anterior y vuelve a instalarla.

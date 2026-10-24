@@ -81,14 +81,83 @@
             justify-content: space-between;
             gap: 18px;
         }
-        .brand { display: inline-flex; align-items: center; gap: 11px; color: inherit; text-decoration: none; min-width: 0; }
-        .brand-logo {
-            width: 52px; height: 52px; border-radius: 12px; object-fit: contain; display: block; flex: 0 0 52px;
-            background: transparent; padding: 0; box-shadow: none;
-        }
-        .brand-copy { min-width: 0; display: grid; line-height: 1.13; }
-        .brand-copy strong { font-size: 1.05rem; white-space: nowrap; }
-        .brand-copy small { font-size: 0.78rem; opacity: 0.85; }
+       .brand {
+    appearance: none;
+    -webkit-appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 11px;
+
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+
+    color: #ffffff;
+    background: transparent !important;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+
+    font: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.brand:hover,
+.brand:focus,
+.brand:active {
+    color: #ffffff;
+    background: transparent !important;
+    box-shadow: none;
+}
+
+.brand:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.85);
+    outline-offset: 5px;
+    border-radius: 4px;
+}
+
+.brand-logo {
+    display: block;
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    object-fit: contain;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    box-shadow: none;
+}
+
+.brand-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    line-height: 1.15;
+}
+
+.brand-copy strong {
+    display: block;
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.brand-copy small {
+    display: block;
+    margin-top: 3px;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.78rem;
+    font-weight: 500;
+}
         .header-actions { display: flex; align-items: center; gap: 9px; }
         .header-button, .install-btn {
             min-height: 42px; border-radius: 12px; padding: 0 15px; display: inline-flex; align-items: center;
